@@ -1,0 +1,8 @@
+# The dataset ships ONLY as release assets, never committed to the repo.
+*.zip
+*.tif
+*.tiff
+tme_*_groundtruth.csv
+all_groundtruth.csv
+*_params.json
+*_qc.png
