@@ -1,4 +1,4 @@
-# Using the TME-QUANT synthetic dataset
+# Using the multiplex synthetic dataset
 
 This is the detailed guide: what the data contains, how to load and detect cells
 in QuPath, what each analysis should recover, and the ground-truth format. For

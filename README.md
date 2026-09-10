@@ -1,12 +1,13 @@
-# TME-QUANT synthetic data
+# Multiplex synthetic data
 
-A small, **fully-labelled synthetic multiplexed-imaging dataset** of a tumor
-microenvironment (TME) -- for learning, testing, and validating cell
-**clustering, phenotyping, classification, and spatial-neighborhood analysis**
-in [QuPath](https://qupath.github.io/), especially with the
+A small, **fully-labelled synthetic multiplexed-imaging dataset** -- a schematic
+tissue of several cell types organised into niches -- for learning, testing, and
+validating cell **clustering, phenotyping, classification, and
+spatial-neighborhood analysis** in [QuPath](https://qupath.github.io/), especially
+with the
 [QP-CAT extension](https://github.com/uw-loci/qupath-extension-cell-analysis-tools).
 
-![Synthetic TME preview: red PanCK+ tumor nests, green CD3+ T cells at the nest boundaries, blue CD20+ B-cell follicles](docs/preview.png)
+![Synthetic multiplex preview: red PanCK+ tumor-cell nests, green CD3+ T cells at the nest boundaries, blue CD20+ B-cell follicles](docs/preview.png)
 
 ## Why this exists
 
@@ -35,7 +36,12 @@ recover**:
 
 It is synthetic and makes no claim to biological realism beyond what is needed to
 exercise these tools; it is a **test fixture and teaching aid**, not a substitute
-for real data.
+for real data. In particular it has **no extracellular matrix / collagen and no
+realistic tissue architecture** -- the "nests" and "follicles" are schematic blobs
+that exist only to give the spatial analyses something to find. Adding real tissue
+structure (e.g. an ECM/collagen channel, more faithful tumor architecture) is a
+possible future direction, which is also why the dataset is named for what it is
+(multiplex synthetic data) rather than for any specific tissue.
 
 ## What's in it
 
@@ -56,7 +62,7 @@ ground-truth CSV column reference are in **[INSTRUCTIONS.md](INSTRUCTIONS.md)**.
 ## Get the data
 
 Download the dataset zip from the
-**[latest release](https://github.com/uw-loci/tme-quant-synthetic-data/releases/latest)**.
+**[latest release](https://github.com/uw-loci/multiplex-synthetic-data/releases/latest)**.
 The zip contains the 8 images, the per-image and combined ground-truth CSVs, the
 per-image parameter files, and a copy of the usage instructions. (The data is
 distributed only as release assets -- it is not stored in the repository itself.)
