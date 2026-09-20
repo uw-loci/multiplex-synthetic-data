@@ -1,0 +1,29 @@
+# 02_cluster.yaml -- QP-CAT headless batch config: clustering + spatial stats.
+# Run:  QuPath script <qpcat-jar-scripts>/batch/qpcat_batch.groovy --args 02_cluster.yaml
+#
+# EDIT THIS: set <PROJECT_DIR> to the project built by 01_build_project.groovy.
+
+version: "1.0"
+
+scope:
+  projects: ["<PROJECT_DIR>/project.qpproj"]   # <-- set this
+  images: all                                   # cluster every image in the project
+
+clustering:
+  type: leiden                # algorithm: leiden | kmeans | hdbscan | gmm | agglomerative | banksy
+  normalization: zscore       # per-marker normalization before clustering
+  measurements:               # the feature set -- one per-cell "Cell: <marker> mean"
+    - "Cell: PanCK mean"       #   (Nucleus: Ki67 mean is the nuclear-marker exception)
+    - "Nucleus: Ki67 mean"
+    - "Cell: aSMA mean"
+    - "Cell: CD3 mean"
+    - "Cell: CD8 mean"
+    - "Cell: CD20 mean"
+    - "Cell: CD68 mean"
+  embedding: umap             # 2D embedding for the results scatter (umap | pca | tsne)
+
+spatial_stats:
+  enabled: true
+  graph: { type: knn, k: 15 }               # neighborhood graph: knn (k), radius, or delaunay
+  statistics: [neighborhood_enrichment, ripley_l, cooccurrence_pairwise, moran_i, geary_c]
+  permutations: 200                         # permutations for the significance tests

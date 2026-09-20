@@ -7,7 +7,7 @@ spatial-neighborhood analysis** in [QuPath](https://qupath.github.io/), especial
 with the
 [QP-CAT extension](https://github.com/uw-loci/qupath-extension-cell-analysis-tools).
 
-![Synthetic multiplex preview: red PanCK+ tumor-cell nests, green CD3+ T cells at the nest boundaries, blue CD20+ B-cell follicles](docs/preview.png)
+![The eight synthetic images as color composites -- white DAPI, cyan PanCK, yellow Ki67, brown aSMA, green CD3, magenta CD8, blue CD20, red CD68. Cyan tumor nests, brown spindle-cell stroma, blue B-cell follicles, and scattered immune cells; the last two images are immune-rich and immune-poor variants.](docs/overview.png)
 
 ## Why this exists
 
@@ -54,6 +54,8 @@ possible future direction, which is also why the dataset is named for what it is
   morphology, and per-marker positivity + intensity.
 - **2 variant layouts** (immune-rich and immune-poor) and **3 batch-offset
   images** for batch-correction testing.
+
+![Zoomed features: an aligned band of parallel spindle nuclei (a tissue-edge / palisade), loose non-overlapping stroma with each fibroblast's cytoplasm sparing the nucleus, dendritic CD68 macrophages, a tumor nest with PanCK cytoplasm rings and Ki67-positive nuclei, and a B-cell follicle.](docs/features.png)
 
 Full channel/type/region tables, the QuPath cell-detection recipe, a
 feature-by-feature guide to what each analysis should recover, and the

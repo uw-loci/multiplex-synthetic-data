@@ -6,3 +6,6 @@ tme_*_groundtruth.csv
 all_groundtruth.csv
 *_params.json
 *_qc.png
+__pycache__/
+*.pyc
+tme_*_points.geojson

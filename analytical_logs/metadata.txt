@@ -1,0 +1,18 @@
+Multiplex synthetic data -- analysis metadata
+=============================================
+
+Dataset version:     v1.1
+Generator:           cellphantomlib 0.1.0  (maintained privately by LOCI; not distributed)
+Images:              8 x (2048 x 2048), 8 channels, 2D, uint8, 0.5 um/pixel, ImageJ-hyperstack TIFF
+
+Analysis tool:       QP-CAT (qupath-extension-cell-analysis-tools) 0.12.0
+Confusion matrix:    qupath-extension-confusion-matrix 0.2.2  (used for the classifier-error demo)
+Host application:    QuPath 0.7.0
+QP-CAT Appose env:   v0.2.7   (Python 3.11)
+  scikit-learn 1.9.0 | scanpy 1.11.5 | umap-learn 0.5.12 | squidpy 1.6.6 | harmonypy 0.2.0 | pybanksy available
+
+Analysis date:       2026-09-13
+Detection:           QuPath watershed cell detection on DAPI, backgroundRadiusMicrons=0, requestedPixelSizeMicrons=0.5
+Clustering:          Leiden, zscore normalization, 7 marker Cell-means (+ Nucleus Ki67), UMAP embedding
+Spatial stats:       kNN graph k=15, 200 permutations (neighborhood enrichment, Ripley L, co-occurrence, Moran's I, Geary's C)
+Scoring:             scripts/04_score.py (numpy + scipy), each detection matched to nearest ground-truth cell

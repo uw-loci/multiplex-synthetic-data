@@ -1,0 +1,49 @@
+CLASSIFICATION vs ground truth (Otsu-gated marker rules) -- Cytoplasm compartment
+==============================================================
+Otsu thresholds (Cytoplasm mean): PanCK=66.8, aSMA=76.4, CD3=43.9, CD8=44.2, CD20=52.0, CD68=65.4
+gating rules (first match): tumor=PanCK+; b_cell=CD20+; macrophage=CD68+;
+  cd8_t=CD3+&CD8+; helper_t=CD3+&CD8-; fibroblast=aSMA+
+
+cells scored:      15162
+overall accuracy:  0.9736
+unknown (no gate): 341
+
+per-type precision / recall / F1:
+  tumor       P=0.985 R=1.000 F1=0.992  (n=2697)
+  fibroblast  P=1.000 R=0.993 F1=0.996  (n=4679)
+  cd8_t       P=1.000 R=0.930 F1=0.964  (n=1979)
+  helper_t    P=0.991 R=0.935 F1=0.962  (n=2066)
+  b_cell      P=1.000 R=0.946 F1=0.972  (n=1417)
+  macrophage  P=1.000 R=0.993 F1=0.996  (n=2324)
+
+CLASSIFICATION vs ground truth (Otsu-gated marker rules) -- Cell compartment
+==============================================================
+Otsu thresholds (Cell mean): PanCK=33.8, aSMA=47.7, CD3=29.5, CD8=29.7, CD20=33.6, CD68=40.9
+gating rules (first match): tumor=PanCK+; b_cell=CD20+; macrophage=CD68+;
+  cd8_t=CD3+&CD8+; helper_t=CD3+&CD8-; fibroblast=aSMA+
+
+cells scored:      15162
+overall accuracy:  0.9771
+unknown (no gate): 200
+
+per-type precision / recall / F1:
+  tumor       P=0.954 R=1.000 F1=0.977  (n=2697)
+  fibroblast  P=1.000 R=0.978 F1=0.989  (n=4679)
+  cd8_t       P=1.000 R=0.942 F1=0.970  (n=1979)
+  helper_t    P=0.992 R=0.972 F1=0.982  (n=2066)
+  b_cell      P=1.000 R=0.982 F1=0.991  (n=1417)
+  macrophage  P=0.999 R=0.981 F1=0.990  (n=2324)
+
+MULTIVARIATE classifier (nearest class-centroid, 6 Cell markers, 50/50 train/test)
+==============================================================
+test cells:    7581
+test accuracy: 0.9959
+
+per-type recall (test half):
+  b_cell      0.999 (n=735)
+  cd8_t       0.979 (n=977)
+  fibroblast  1.000 (n=2332)
+  helper_t    0.994 (n=1028)
+  macrophage  0.997 (n=1144)
+  tumor       1.000 (n=1365)
+

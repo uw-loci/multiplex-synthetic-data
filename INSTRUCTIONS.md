@@ -14,9 +14,17 @@ Unzipping a release gives you:
 tme_00.tif ... tme_07.tif        8 images (8-channel, 2D, uint8, 0.5 um/pixel)
 tme_00_groundtruth.csv ...       per-image per-cell ground truth
 tme_00_params.json ...           per-image generation parameters (seed, layout, counts)
+tme_00_points.geojson ...        QuPath-importable classified points (one per cell, by type)
 all_groundtruth.csv              every cell from every image, combined
 INSTRUCTIONS.md                  this file
 ```
+
+The `tme_NN_points.geojson` files are the ground truth as **QuPath point objects**,
+one point per cell, classified by cell type. Import a file (File > Import objects,
+or `PathIO.readObjects`) to overlay the true labels, or to **train a classifier**:
+use the points to label a subset of detections, then train QuPath's object
+classifier or seed QP-CAT's autoencoder. (A trained multivariate classifier
+recovers the types at ~99.6% -- see `analytical_logs/`.)
 
 Images are **ImageJ-hyperstack TIFFs**. They open in QuPath and Fiji with the
 correct channel count, channel names, and pixel calibration (0.5 um/pixel). Set
@@ -26,21 +34,28 @@ the image type to **Fluorescence** if QuPath prompts.
 
 ## 2. Channels (8)
 
-| # | Channel | Localization | Positive on | Notes |
-|---|---------|--------------|-------------|-------|
-| 0 | **DAPI** | nuclear | all cells | detection channel; no background |
-| 1 | **PanCK** | cytoplasmic | tumor | epithelial marker |
-| 2 | **Ki67** | nuclear | ~30% of tumor | proliferation; carries a smooth spatial **gradient** across the slide (a signal for Moran's I / Geary's C) |
-| 3 | **aSMA** | cytoplasmic | fibroblast | stromal marker; on elongated cells |
-| 4 | **CD3** | membrane | CD8 T + helper T | pan-T-cell |
-| 5 | **CD8** | membrane | CD8 T only | cytotoxic T |
-| 6 | **CD20** | membrane | B cell | B-cell marker |
-| 7 | **CD68** | cytoplasmic | macrophage | myeloid marker |
+| # | Channel | Localization | Color | Positive on | Notes |
+|---|---------|--------------|-------|-------------|-------|
+| 0 | **DAPI** | nuclear | white | all cells | detection channel; no background |
+| 1 | **PanCK** | cytoplasmic | cyan | tumor | epithelial marker |
+| 2 | **Ki67** | nuclear | yellow | ~30% of tumor | proliferation; carries a smooth spatial **gradient** across the slide (a signal for Moran's I / Geary's C) |
+| 3 | **aSMA** | cytoplasmic | brown | fibroblast | stromal marker; on elongated spindle cells |
+| 4 | **CD3** | cytoplasmic | green | CD8 T + helper T | pan-T-cell |
+| 5 | **CD8** | cytoplasmic | magenta | CD8 T only | cytotoxic T |
+| 6 | **CD20** | cytoplasmic | blue | B cell | B-cell marker |
+| 7 | **CD68** | cytoplasmic | red | macrophage | myeloid; some cells have an irregular / dendritic cytoplasm |
 
-Markers other than DAPI have **no background** (a positive cell against black).
-Measured in QuPath, a cell's `Cell: <marker> mean` (or `Nucleus: Ki67 mean` for
-the nuclear marker) is high on its type and ~0 elsewhere -- i.e. each marker is
-cleanly **bimodal**, which is what makes both clustering and threshold gating work.
+Channel display colors are embedded in the TIFF (as ImageJ LUTs), so QuPath shows
+them without any manual setup.
+
+**Cytoplasmic markers render in the cytoplasm only -- the nucleus stays a dark
+hole** (a cytoplasmic stain is not seen over the nucleus). CD3 / CD8 / CD20 are
+cytoplasmic markers that fill the whole (thin) lymphocyte cytoplasm. So a
+cytoplasmic marker's signal lives in `Cell: <marker> mean` and
+`Cytoplasm: <marker> mean`; the one nuclear marker (Ki67) lives in
+`Nucleus: Ki67 mean`. Markers other than DAPI have **no background** (a positive
+cell against black), so each marker is cleanly **bimodal** -- which is what makes
+both clustering and threshold gating work.
 
 ---
 
@@ -57,7 +72,7 @@ recovered from measurements (clustering / phenotyping), from image patches
 | **cd8_t** | CD3+ CD8+ | small, round (~10 um) | nest boundary + stroma |
 | **helper_t** | CD3+ (CD8-) | small, round | stroma + boundary |
 | **b_cell** | CD20+ | small, round | follicles |
-| **macrophage** | CD68+ | medium, round (~13 um) | dispersed |
+| **macrophage** | CD68+ | medium (~13 um); some irregular / dendritic | dispersed |
 
 Note that **CD8 T and helper T differ only by CD8** -- a deliberately subtle
 split to test cluster resolution / a two-marker gate.
@@ -76,9 +91,14 @@ Cells are not scattered at random. Each image is built from tissue **regions**:
   while helper-T (more stromal) is *not* enriched next to tumor.
 - **B-cell follicles** -- dense CD20+ aggregates in the stroma. => strong
   B<->B self-enrichment; a distinct "follicle" cellular neighborhood.
-- **Stroma** -- fibroblasts filling the space between nests, with dispersed
-  macrophages and some T cells. => fibroblasts are spatially *dispersed*;
-  tumor<->fibroblast strong *avoidance* (they occupy different regions).
+- **Aligned stroma bands** -- a few elongated regions where fibroblasts are packed
+  tightly and oriented **parallel** to the band's long axis, simulating a tissue
+  edge or an epithelial-like palisade. Marked `aligned_stroma` in the `region`
+  column; the per-cell `angle_deg` clusters around the band orientation there.
+- **Stroma** -- fibroblasts filling the space between nests, **loosely spaced**:
+  each spindle cell keeps room for its (large) cytoplasm and cells do not overlap,
+  with dispersed macrophages and some T cells. => fibroblasts are spatially
+  *dispersed*; tumor<->fibroblast strong *avoidance* (they occupy different regions).
 
 The per-cell `region` / `region_id` columns in the ground truth record which
 region each cell came from, so you can check any of the above directly.
@@ -130,6 +150,17 @@ Match your result against the ground truth to confirm the tool is working.
 | **Moran's I / Geary's C** | on `Ki67` | high spatial autocorrelation (Ki67 carries a smooth gradient) |
 | **Batch correction** (Harmony) | joint clustering across all 8 images | a cell type clusters together across all images despite the per-image intensity offsets (see below) |
 
+**Validating a classifier (Confusion Matrix extension).** Because every cell ships
+with an exact label as a classified point (`tme_NN_points.geojson`), the dataset is
+a ready-made demo for the
+[Confusion Matrix extension](https://github.com/kgallik/QuPath_Confusion_Matrix_Extension):
+classify your cells, import the points as ground truth, and the extension builds
+the actual-vs-predicted matrix -- then **click any off-diagonal cell to select the
+misclassified cells in the viewer** and see exactly where the classifier failed
+(e.g. T cells mislabeled as tumor from PanCK spillover at nest boundaries). A
+ready-to-run script and the expected matrix are in
+[`analytical_logs/`](analytical_logs/README.md#confusion-matrix-extension-demo).
+
 For batch correction specifically: cluster all 8 images **jointly**, once without
 and once with correction. Images `tme_02`, `tme_04`, and `tme_05` carry marker
 intensity offsets (roughly x0.8, x1.2, x0.85). With correction, cells of a given
@@ -166,8 +197,8 @@ One row per cell. `all_groundtruth.csv` is every image concatenated; each
 | `centroid_x_px`, `centroid_y_px` | nucleus centroid in pixels |
 | `centroid_x_um`, `centroid_y_um` | nucleus centroid in microns |
 | `cell_type` | one of the 6 types |
-| `region` | `nest` / `follicle` / `boundary` / `stroma` |
-| `region_id` | nest/follicle instance id (0 for boundary/stroma) |
+| `region` | `nest` / `follicle` / `boundary` / `aligned_stroma` / `stroma` |
+| `region_id` | nest/follicle instance id (0 for boundary/aligned/stroma) |
 | `size_mode` | `small` / `medium` / `large` |
 | `shape` | `round` / `elliptical` |
 | `major_axis_um`, `minor_axis_um`, `equiv_diameter_um` | nucleus size |

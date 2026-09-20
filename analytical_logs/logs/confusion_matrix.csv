@@ -1,0 +1,19 @@
+"# Otsu-gate confusion matrix -- Cytoplasm compartment (accuracy 0.9736, n=15162)"
+actual\predicted,tumor,fibroblast,cd8_t,helper_t,b_cell,macrophage,unknown,total
+tumor,2697,0,0,0,0,0,0,2697
+fibroblast,0,4645,0,0,0,0,34,4679
+cd8_t,20,0,1840,17,0,0,102,1979
+helper_t,8,0,0,1932,0,0,126,2066
+b_cell,0,0,0,1,1341,0,75,1417
+macrophage,13,0,0,0,0,2307,4,2324
+total,2738,4645,1840,1950,1341,2307,341,15162
+
+"# Otsu-gate confusion matrix -- Cell compartment (accuracy 0.9771, n=15162)"
+actual\predicted,tumor,fibroblast,cd8_t,helper_t,b_cell,macrophage,unknown,total
+tumor,2697,0,0,0,0,0,0,2697
+fibroblast,1,4575,0,0,0,2,101,4679
+cd8_t,65,0,1864,15,0,0,35,1979
+helper_t,19,0,0,2009,0,0,38,2066
+b_cell,1,0,0,1,1391,0,24,1417
+macrophage,43,0,0,0,0,2279,2,2324
+total,2826,4575,1864,2025,1391,2281,200,15162
