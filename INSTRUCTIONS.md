@@ -8,16 +8,24 @@ the short version see [README.md](README.md).
 
 ## 1. Contents of a release
 
-Unzipping a release gives you:
+Unzipping a release gives you, with each kind of file in its own folder:
 
 ```
-tme_00.tif ... tme_07.tif        8 images (8-channel, 2D, uint8, 0.5 um/pixel)
-tme_00_groundtruth.csv ...       per-image per-cell ground truth
-tme_00_params.json ...           per-image generation parameters (seed, layout, counts)
-tme_00_points.geojson ...        QuPath-importable classified points (one per cell, by type)
-all_groundtruth.csv              every cell from every image, combined
-INSTRUCTIONS.md                  this file
+INSTRUCTIONS.md                     this file
+images/
+  tme_00.tif ... tme_07.tif         8 images (8-channel, 2D, uint8, 0.5 um/pixel)
+ground_truth/
+  tme_00_groundtruth.csv ...        per-image per-cell ground truth
+  all_groundtruth.csv               every cell from every image, combined
+  tme_00_points.geojson ...         QuPath-importable classified points (one per cell, by type)
+params/
+  tme_00_params.json ...            per-image generation parameters (seed, layout, counts)
+analytical_logs/                    scripts + logs to reproduce and score the analyses
 ```
+
+To build a QuPath project, just point **Add images** at the `images/` folder and
+select all 8. The `ground_truth/` and `params/` folders are reference data you
+pull in as needed (e.g. importing the points, or scoring a result).
 
 The `tme_NN_points.geojson` files are the ground truth as **QuPath point objects**,
 one point per cell, classified by cell type. Import a file (File > Import objects,
@@ -109,8 +117,8 @@ region each cell came from, so you can check any of the above directly.
 
 ## 5. Loading + cell detection in QuPath
 
-1. **Create a project** and add the `tme_*.tif` images. Confirm each reads as
-   8 channels at pixel size 0.5 um (Image tab).
+1. **Create a project** and add the images from the `images/` folder (all 8
+   `tme_*.tif`). Confirm each reads as 8 channels at pixel size 0.5 um (Image tab).
 2. **Full-image annotation**: select all, or add a rectangle covering the image,
    so detection has a parent region.
 3. **Cell detection** (Analyze > Cell detection) on the **DAPI** channel. The one

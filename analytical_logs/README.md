@@ -60,8 +60,9 @@ Setup (after building a project with `01_build_project.groovy`):
 
 ```bash
 # Predict cell types with an imperfect single-marker Otsu gate AND import the
-# shipped ground-truth points (DATA_DIR = the unzipped release folder).
-$QP script scripts/06_classify_for_confusion_matrix.groovy --args PROJ --args DATA_DIR
+# shipped ground-truth points (second arg = the ground_truth/ folder holding the
+# tme_NN_points.geojson files).
+$QP script scripts/06_classify_for_confusion_matrix.groovy --args PROJ --args ground_truth
 ```
 
 Then in QuPath: open an image and run **Extensions > Confusion Matrix > Analyze
@@ -91,7 +92,7 @@ QP=/path/to/QuPath            # the QuPath launcher
 BATCH=<qpcat-scripts>/batch/qpcat_batch.groovy   # ships inside the QP-CAT jar
 
 # 1. Build a project and detect cells (DAPI, background radius 0)
-$QP script scripts/01_build_project.groovy --args PROJ --args tme_00.tif --args tme_01.tif ... 
+$QP script scripts/01_build_project.groovy --args PROJ --args images/tme_00.tif --args images/tme_01.tif ... 
 
 # 2. Cluster + spatial stats (edit scripts/02_cluster.yaml: set <PROJECT_DIR> to PROJ)
 $QP script "$BATCH" --args scripts/02_cluster.yaml
@@ -100,7 +101,7 @@ $QP script "$BATCH" --args scripts/02_cluster.yaml
 $QP script scripts/03_dump_cells.groovy --args PROJ --args cells.csv
 
 # 4. Score against the ground truth shipped in the release
-python3 scripts/04_score.py --cells cells.csv --groundtruth all_groundtruth.csv \
+python3 scripts/04_score.py --cells cells.csv --groundtruth ground_truth/all_groundtruth.csv \
     --result-json PROJ/qpcat/cluster_results/yaml_tme_00.tif.json --outdir logs/
 ```
 
