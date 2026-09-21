@@ -1,20 +1,20 @@
 # Analytical logs
 
 Reproducible **clustering**, **classification**, and **spatial-neighborhood**
-analysis of this dataset (v1.1) with [QP-CAT](https://github.com/uw-loci/qupath-extension-cell-analysis-tools),
+analysis of this dataset (v1.2) with [QP-CAT](https://github.com/uw-loci/qupath-extension-cell-analysis-tools),
 plus the exact scripts so you can re-run and score it yourself against the
 per-cell ground truth. Every version number is in **[metadata.txt](metadata.txt)**.
 
-## Results summary (v1.1)
+## Results summary (v1.2)
 
-- **Clustering** (QP-CAT Leiden, 7 marker means): cluster **purity 0.9997**; every
+- **Clustering** (QP-CAT Leiden, 7 marker means): cluster **purity 0.9998**; every
   cell type captured ~100%. (Leiden over-clusters into many *pure* sub-types, so
   purity -- not raw ARI on the sub-clusters -- is the recovery metric; ARI after
   merging sub-clusters to their dominant type is reported too.)
 - **Classification**: a proper **multivariate** classifier (nearest class-centroid on
   the 6-lineage-marker vector, 50/50 train/test) reaches **0.996 accuracy** -- the data
-  is fully classifiable. A naive **single-marker Otsu gate** reaches only ~0.977 (Cell) /
-  0.974 (Cytoplasm): thresholding one marker at a time is brittle to cell-expansion
+  is fully classifiable. A naive **single-marker Otsu gate** reaches only ~0.970 (Cell) /
+  0.968 (Cytoplasm): thresholding one marker at a time is brittle to cell-expansion
   spillover in dense tissue, whereas using all markers jointly (multivariate, or
   clustering) is robust. The ground truth itself is **exact** -- every type's markers are
   100% clean -- so the residual is measurement spillover, not a data defect.
@@ -66,7 +66,7 @@ $QP script scripts/06_classify_for_confusion_matrix.groovy --args PROJ --args DA
 
 Then in QuPath: open an image and run **Extensions > Confusion Matrix > Analyze
 Current Image...** (or **Analyze Project...** for the aggregate across all 8). The
-gate is deliberately imperfect (~97.7% on the Cell compartment), and its errors
+gate is deliberately imperfect (~97.0% on the Cell compartment), and its errors
 are the *real* ones this dataset was built to expose:
 
 - **PanCK spillover at nest boundaries** mislabels some T cells as `tumor` -- the

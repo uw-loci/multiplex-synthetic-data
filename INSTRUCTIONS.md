@@ -95,10 +95,12 @@ Cells are not scattered at random. Each image is built from tissue **regions**:
   tightly and oriented **parallel** to the band's long axis, simulating a tissue
   edge or an epithelial-like palisade. Marked `aligned_stroma` in the `region`
   column; the per-cell `angle_deg` clusters around the band orientation there.
-- **Stroma** -- fibroblasts filling the space between nests, **loosely spaced**:
-  each spindle cell keeps room for its (large) cytoplasm and cells do not overlap,
-  with dispersed macrophages and some T cells. => fibroblasts are spatially
-  *dispersed*; tumor<->fibroblast strong *avoidance* (they occupy different regions).
+- **Stroma** -- fibroblasts between the nests, **loosely and unevenly spaced**:
+  each spindle cell keeps room for its (large) cytoplasm (rings mostly do not
+  overlap), and a smooth density field makes the stroma denser hugging a nest and
+  thin out into open ECM voids away from it -- rather than a uniform lawn. Dispersed
+  macrophages and some T cells fill in. => fibroblasts are spatially *dispersed*;
+  tumor<->fibroblast strong *avoidance* (they occupy different regions).
 
 The per-cell `region` / `region_id` columns in the ground truth record which
 region each cell came from, so you can check any of the above directly.

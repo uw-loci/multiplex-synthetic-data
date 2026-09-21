@@ -1,14 +1,14 @@
 CLUSTERING vs ground truth (QP-CAT Leiden labels)
 ====================================================
-cells scored:        15162
-distinct clusters:   140 (per-image; Leiden over-clusters into pure sub-types)
-cluster PURITY:      0.9997  (cell whose cluster's dominant GT type is its own)
-adjusted Rand index: 0.9992  (sub-clusters merged to their dominant type, vs GT type)
+cells scored:        11416
+distinct clusters:   118 (per-image; Leiden over-clusters into pure sub-types)
+cluster PURITY:      0.9998  (cell whose cluster's dominant GT type is its own)
+adjusted Rand index: 0.9997  (sub-clusters merged to their dominant type, vs GT type)
 
 per-type capture (fraction landing in a cluster dominated by that type):
-  tumor       1.000  (n=2697)
-  fibroblast  1.000  (n=4679)
-  cd8_t       1.000  (n=1979)
-  helper_t    0.998  (n=2066)
-  b_cell      1.000  (n=1417)
-  macrophage  1.000  (n=2324)
+  tumor       1.000  (n=2693)
+  fibroblast  1.000  (n=3301)
+  cd8_t       1.000  (n=1388)
+  helper_t    0.999  (n=1392)
+  b_cell      1.000  (n=1088)
+  macrophage  1.000  (n=1554)
