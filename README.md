@@ -79,13 +79,16 @@ Two downloads are attached to the
 Prefer to skip setup? The **demo-project** zip is a complete QuPath project that
 opens straight after unzipping (bundled images, relative paths). It ships the cell
 **detections** (unclassified), the **ground-truth points** as classified
-annotations, a **trained object classifier** in
-`classifiers/object_classifiers/`, and the **detection script** under
-`scripts/`. Open it, apply the classifier (Automate > Project scripts >
-`apply_trained_classifier`, or Classify > Object classification > Load), then run
-the **Confusion Matrix** extension to see predictions vs ground truth and click
-any off-diagonal cell to jump to the misclassifications. Details in the project's
-`DEMO_README.md`.
+annotations, a **trained object classifier** in `classifiers/object_classifiers/`,
+and a set of **project scripts**. The whole demo runs with **core QuPath alone**:
+open it, apply the classifier (Automate > Project scripts >
+`apply_trained_classifier`, or the imperfect `classify_with_marker_gate` if you
+want visible errors), then run `check_against_ground_truth` -- it prints a
+confusion matrix + accuracy to the log and highlights the misclassified cells in
+the viewer. (The QuPath **Confusion Matrix** extension gives the same comparison
+interactively and is how it's shown in the workshop, but it is not publicly
+installable at this time, so the script is the way to reproduce it yourself today.)
+Details in the project's `DEMO_README.md`.
 
 ## Quick start
 

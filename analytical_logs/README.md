@@ -55,13 +55,20 @@ QuPath point objects, one per cell, classified by cell type. Import it
 (File > Import objects, or `PathIO.readObjects`) to overlay the truth or to train
 QuPath's object classifier / seed QP-CAT's autoencoder labels.
 
-## Confusion Matrix extension demo
+## Validating a classifier (confusion matrix)
 
-The [Confusion Matrix extension](https://github.com/kgallik/QuPath_Confusion_Matrix_Extension)
-compares a classifier's predictions against ground truth and lets you **click any
-off-diagonal matrix cell to jump straight to the misclassified cells in the
-viewer** -- so this dataset (which ships exact per-cell ground truth as classified
-points) is a natural demo of *where* a classifier goes wrong.
+Because this dataset ships exact per-cell ground truth as classified points, you
+can score any classification and see *where* a classifier goes wrong. Two ways,
+both showing the same thing:
+
+- **Core QuPath (no extensions).** The demo-project script
+  `check_against_ground_truth.groovy` prints an actual-vs-predicted confusion
+  matrix + accuracy to the log and selects the misclassified cells in the viewer.
+  `logs/confusion_matrix.csv` here is the same matrix computed offline.
+- **Confusion Matrix extension (optional).** Gives the matrix interactively -- click
+  an off-diagonal cell to jump to those cells. This is how it's shown in the
+  workshop, but the extension is **not publicly installable at this time**, so use
+  the script above to reproduce it yourself today.
 
 Setup (after building a project with `01_build_project.groovy`):
 
@@ -72,22 +79,21 @@ Setup (after building a project with `01_build_project.groovy`):
 $QP script scripts/06_classify_for_confusion_matrix.groovy --args PROJ --args ground_truth
 ```
 
-Then in QuPath: open an image and run **Extensions > Confusion Matrix > Analyze
-Current Image...** (or **Analyze Project...** for the aggregate across all 8). The
-gate is deliberately imperfect (~97.0% on the Cell compartment), and its errors
-are the *real* ones this dataset was built to expose:
+Then score it -- run `check_against_ground_truth.groovy` (core QuPath), or the
+Confusion Matrix extension if you have it. The gate is deliberately imperfect
+(~97.0% on the Cell compartment), and its errors are the *real* ones this dataset
+was built to expose:
 
 - **PanCK spillover at nest boundaries** mislabels some T cells as `tumor` -- the
-  `cd8_t -> tumor` and `helper_t -> tumor` off-diagonal cells. Click them and the
-  viewer highlights T cells sitting right against a tumor nest.
-- **Dim / below-threshold** cells fall to no class (`unknown`), the largest error
-  source for a one-marker-at-a-time gate.
+  `cd8_t -> tumor` and `helper_t -> tumor` off-diagonal cells (T cells sitting right
+  against a tumor nest).
+- **Dim / below-threshold** cells fall to no class, the largest error source for a
+  one-marker-at-a-time gate.
 
-`logs/confusion_matrix.csv` is that matrix computed offline (Cell and Cytoplasm
-compartments) so you can see the expected numbers without the GUI. To demo a
-*better* classifier for contrast, re-run step 6 with `GATING_COMPARTMENT =
-"Cytoplasm"`, or train QuPath's object classifier on the imported points -- the
-multivariate result (~99.6%) has a far cleaner diagonal.
+`logs/confusion_matrix.csv` holds this matrix (Cell and Cytoplasm compartments) so
+you can see the expected numbers without any GUI. For contrast, a *better*
+classifier -- `GATING_COMPARTMENT = "Cytoplasm"`, or the trained object classifier
+(`07_train_object_classifier.groovy`, ~99.6%+) -- has a far cleaner diagonal.
 
 ## How to reproduce
 

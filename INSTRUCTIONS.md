@@ -160,16 +160,19 @@ Match your result against the ground truth to confirm the tool is working.
 | **Moran's I / Geary's C** | on `Ki67` | high spatial autocorrelation (Ki67 carries a smooth gradient) |
 | **Batch correction** (Harmony) | joint clustering across all 8 images | a cell type clusters together across all images despite the per-image intensity offsets (see below) |
 
-**Validating a classifier (Confusion Matrix extension).** Because every cell ships
-with an exact label as a classified point (`tme_NN_points.geojson`), the dataset is
-a ready-made demo for the
-[Confusion Matrix extension](https://github.com/kgallik/QuPath_Confusion_Matrix_Extension):
-classify your cells, import the points as ground truth, and the extension builds
-the actual-vs-predicted matrix -- then **click any off-diagonal cell to select the
-misclassified cells in the viewer** and see exactly where the classifier failed
-(e.g. T cells mislabeled as tumor from PanCK spillover at nest boundaries). A
-ready-to-run script and the expected matrix are in
-[`analytical_logs/`](analytical_logs/README.md#confusion-matrix-extension-demo).
+**Validating a classifier.** Because every cell ships with an exact label as a
+classified point (`tme_NN_points.geojson`), you can score any classification
+against ground truth. With **core QuPath only**, the demo-project script
+`check_against_ground_truth.groovy` prints an actual-vs-predicted confusion matrix
++ accuracy to the log and selects the misclassified cells in the viewer, so you can
+see exactly where the classifier failed (e.g. T cells mislabeled as tumor from
+PanCK spillover at nest boundaries). The QuPath **Confusion Matrix** extension does
+the same thing interactively (click an off-diagonal cell to jump to those cells),
+and is how the matrix is shown in the workshop -- but note that extension is **not
+publicly installable at this time**, so the script is the way to reproduce it
+yourself today. A ready-to-run setup and the expected matrix are in
+[`analytical_logs/`](analytical_logs/README.md#validating-a-classifier-confusion-matrix)
+and in the demo-project release asset (see its `DEMO_README.md`).
 
 For batch correction specifically: cluster all 8 images **jointly**, once without
 and once with correction. Images `tme_02`, `tme_04`, and `tme_05` carry marker
