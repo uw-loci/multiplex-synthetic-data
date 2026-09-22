@@ -76,11 +76,14 @@ Two downloads are attached to the
 
 ### Ready-to-run demo project
 
-Prefer to skip setup? The **demo-project** zip is a complete QuPath project that
-opens straight after unzipping (bundled images, relative paths). It ships the cell
-**detections** (unclassified), the **ground-truth points** as classified
-annotations, a **trained object classifier** in `classifiers/object_classifiers/`,
-and a set of **project scripts**. The whole demo runs with **core QuPath alone**:
+Prefer to skip setup? The **demo-project** zip is a complete QuPath project with
+the images bundled in `images/`. (A QuPath project stores absolute image paths, so
+on first open you point it at that folder **once** -- run the included
+`fix_image_paths` project script, or use QuPath's locate-missing-images prompt.) It
+ships the cell **detections** (unclassified), the **ground-truth points** as
+classified annotations, a **trained object classifier** in
+`classifiers/object_classifiers/`, and a set of **project scripts**. The whole demo
+then runs with **core QuPath alone**:
 open it, apply the classifier (Automate > Project scripts >
 `apply_trained_classifier`, or the imperfect `classify_with_marker_gate` if you
 want visible errors), then run `check_against_ground_truth` -- it prints a
