@@ -63,17 +63,36 @@ ground-truth CSV column reference are in **[INSTRUCTIONS.md](INSTRUCTIONS.md)**.
 
 ## Get the data
 
-Download the dataset zip from the
-**[latest release](https://github.com/uw-loci/multiplex-synthetic-data/releases/latest)**.
-The zip contains the 8 images, the per-image and combined ground-truth CSVs, the
-per-image parameter files, and a copy of the usage instructions. (The data is
-distributed only as release assets -- it is not stored in the repository itself.)
+Two downloads are attached to the
+**[latest release](https://github.com/uw-loci/multiplex-synthetic-data/releases/latest)**
+(the data is distributed only as release assets, not stored in the repository):
+
+- **`multiplex-synthetic-data-*.zip`** -- the dataset, with each file type in its
+  own folder so you can point QuPath's *Add images* straight at `images/`:
+  `images/` (8 TIFFs), `ground_truth/` (per-image + combined CSVs, and
+  QuPath-importable classified points), `params/` (per-image generation
+  parameters), and `analytical_logs/` (scripts + logs to reproduce the analyses).
+- **`multiplex-synthetic-data-demo-project-*.zip`** -- see below.
+
+### Ready-to-run demo project
+
+Prefer to skip setup? The **demo-project** zip is a complete QuPath project that
+opens straight after unzipping (bundled images, relative paths). It ships the cell
+**detections** (unclassified), the **ground-truth points** as classified
+annotations, a **trained object classifier** in
+`classifiers/object_classifiers/`, and the **detection script** under
+`scripts/`. Open it, apply the classifier (Automate > Project scripts >
+`apply_trained_classifier`, or Classify > Object classification > Load), then run
+the **Confusion Matrix** extension to see predictions vs ground truth and click
+any off-diagonal cell to jump to the misclassifications. Details in the project's
+`DEMO_README.md`.
 
 ## Quick start
 
-1. Download and unzip the latest release.
-2. In QuPath, create a project and add the `tme_*.tif` images (they load as
-   8-channel fluorescence at 0.5 um/pixel).
+1. Download and unzip the latest release (or grab the demo-project zip above to
+   skip straight to step 4).
+2. In QuPath, create a project and add the images from the `images/` folder (they
+   load as 8-channel fluorescence at 0.5 um/pixel).
 3. Run **cell detection** on the `DAPI` channel with background radius **0**
    (the channel has no background; a nonzero radius drops the largest nuclei).
 4. Run your analysis (clustering, phenotyping, spatial stats) and compare the

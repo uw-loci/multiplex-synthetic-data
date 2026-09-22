@@ -41,7 +41,14 @@ scripts/
   05_make_points_geojson.py    build QuPath-importable classified points (to train a classifier)
   06_classify_for_confusion_matrix.groovy   predict cell types + import GT points, for the
                                             Confusion Matrix extension demo
+  07_train_object_classifier.groovy         train an RTrees object classifier from the GT
+                                            points -> object-classifier JSON (as in the demo project)
 ```
+
+A **ready-to-open QuPath demo project** (bundled images, unclassified detections,
+classified ground-truth points, and the trained `cell_type_classifier`) is
+attached to each release as `multiplex-synthetic-data-demo-project-*.zip` -- open
+it, apply the classifier, and run the Confusion Matrix extension with no setup.
 
 Each release also ships a `tme_NN_points.geojson` per image: the ground truth as
 QuPath point objects, one per cell, classified by cell type. Import it
