@@ -6,11 +6,11 @@
  *
  *   1. PREDICTS a cell type for each detected cell with a deliberately imperfect
  *      classifier -- a single-marker Otsu gate (the same rule set 04_score.py
- *      scores). This is the "classifier under test": it is right ~97-98% of the
+ *      scores). This is the "classifier under test": it is right ~98% of the
  *      time, and its mistakes are real (cell-expansion spillover at nest
  *      boundaries), so the confusion matrix has genuine off-diagonal cells to
  *      inspect. The predicted class is written as the cell's PathClass, using the
- *      SAME class names as the ground-truth points (tumor, fibroblast, cd8_t,
+ *      SAME class names as the ground-truth points (tumor, fibroblast, endothelial, cd8_t,
  *      helper_t, b_cell, macrophage) so the extension can line them up.
  *
  *   2. IMPORTS the shipped ground-truth points (tme_NN_points.geojson) as
@@ -45,11 +45,12 @@ REPLACE_EXISTING_POINTS = true
 // Display colors (R,G,B) for the predicted classes; match the point colors.
 TYPE_COLORS = [
     "tumor":      [220, 20, 60],  "fibroblast": [160, 110, 40],
+    "endothelial": [150, 80, 220],
     "cd8_t":      [255, 0, 255],  "helper_t":   [0, 180, 0],
     "b_cell":     [60, 130, 255], "macrophage": [255, 140, 0],
 ]
 // Markers used by the gate (Ki67 is nuclear-only and excluded from gating).
-GATE_MARKERS = ["PanCK", "aSMA", "CD3", "CD8", "CD20", "CD68"]
+GATE_MARKERS = ["PanCK", "CD31", "CD3", "CD8", "CD20", "CD68"]
 // ========================================================================
 
 import qupath.lib.projects.ProjectIO
@@ -123,8 +124,8 @@ for (entry in project.getImageList()) {
             def v = ml.get("${GATING_COMPARTMENT}: ${m} mean")
             pos[m] = (v != null && !Double.isNaN(v) && v >= thr[m])
         }
-        String pred = null
-        if (pos["aSMA"]) pred = "fibroblast"
+        String pred = "fibroblast"   // fibroblasts carry no marker: negative for every gate
+        if (pos["CD31"]) pred = "endothelial"
         if (pos["CD68"]) pred = "macrophage"
         if (pos["CD20"]) pred = "b_cell"
         if (pos["CD3"] && pos["CD8"]) pred = "cd8_t"

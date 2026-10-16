@@ -1,26 +1,30 @@
 # Analytical logs
 
 Reproducible **clustering**, **classification**, and **spatial-neighborhood**
-analysis of this dataset (v1.2) with [QP-CAT](https://github.com/uw-loci/qupath-extension-cell-analysis-tools),
+analysis of this dataset (v2.0) with [QP-CAT](https://github.com/uw-loci/qupath-extension-cell-analysis-tools),
 plus the exact scripts so you can re-run and score it yourself against the
 per-cell ground truth. Every version number is in **[metadata.txt](metadata.txt)**.
+(The v1.2 logs used by the BINA / I2K 2026 workshop are at the
+[v1.2 tag](https://github.com/uw-loci/multiplex-synthetic-data/tree/v1.2/analytical_logs).)
 
-## Results summary (v1.2)
+## Results summary (v2.0)
 
-- **Clustering** (QP-CAT Leiden, 7 marker means): cluster **purity 0.9998**; every
-  cell type captured ~100%. (Leiden over-clusters into many *pure* sub-types, so
-  purity -- not raw ARI on the sub-clusters -- is the recovery metric; ARI after
-  merging sub-clusters to their dominant type is reported too.)
-- **Classification**: a proper **multivariate** classifier (nearest class-centroid on
-  the 6-lineage-marker vector, 50/50 train/test) reaches **0.996 accuracy** -- the data
-  is fully classifiable. A naive **single-marker Otsu gate** reaches only ~0.970 (Cell) /
-  0.968 (Cytoplasm): thresholding one marker at a time is brittle to cell-expansion
-  spillover in dense tissue, whereas using all markers jointly (multivariate, or
-  clustering) is robust. The ground truth itself is **exact** -- every type's markers are
-  100% clean -- so the residual is measurement spillover, not a data defect.
-- **Neighborhood enrichment** matches the designed niches: tumor<->tumor strongly
-  positive, tumor<->fibroblast negative, tumor<->CD8-T positive (nest boundary),
-  B<->B positive (follicles).
+- **Detection**: 11,423 cells detected vs 11,424 in the ground truth; no image is
+  off by more than 3 cells (`logs/detection.log`).
+- **Clustering** (QP-CAT Leiden, 7 marker means): cluster **purity 0.9993**, ARI
+  0.9979 after merging sub-clusters to their dominant type; every cell type is
+  captured at 0.998 or better. Fibroblasts, which carry no marker, form the
+  all-negative clusters.
+- **Classification**: a **multivariate** classifier (nearest class-centroid on the
+  6 lineage markers, 50/50 train/test) reaches **0.994**. A **single-marker Otsu gate**
+  reaches 0.983 (Cytoplasm) / 0.982 (Cell). Its main error is CD8 T cells read as
+  tumor from PanCK spillover at nest boundaries (71 of 1,336 on Cytoplasm, 117 on
+  Cell). The 36 necrotic tumor cells carry no marker and are called fibroblast by
+  any marker-based method; excluding them the gate scores 0.984 / 0.983.
+- **Neighborhood enrichment** (tme_00) matches the designed niches: B<->B (z 57),
+  endothelial<->endothelial (z 52) and tumor<->tumor (z 12) strongly positive,
+  tumor<->fibroblast negative (z -8), tumor<->CD8-T positive (z +3.2) while
+  tumor<->helper-T is negative (z -3.2).
 
 ## Files
 
@@ -34,7 +38,8 @@ logs/
   confusion_matrix.csv         Otsu-gate confusion matrix (actual x predicted), Cell + Cytoplasm
   neighborhood_enrichment.csv  type x type neighborhood z-scores
 scripts/
-  01_build_project.groovy      create a QuPath project from the images + run cell detection
+  01_build_project.groovy      create a QuPath project from the images + run cell detection,
+                               and copy each image's synth.* variation metadata into the project
   02_cluster.yaml              QP-CAT headless batch config (clustering + spatial stats)
   03_dump_cells.groovy         dump per-cell cluster label + Cell/Cytoplasm/Nucleus marker means
   04_score.py                  score clustering + classification + confusion + neighborhood matrix
@@ -43,12 +48,15 @@ scripts/
                                             Confusion Matrix extension demo
   07_train_object_classifier.groovy         train an RTrees object classifier from the GT
                                             points -> object-classifier JSON (as in the demo project)
+  08_apply_otsu_gate.groovy                 the same Otsu gate as 06, on the CURRENT image, no args
 ```
+
+The demo project itself is built by [`../demo_project/build_demo_project.sh`](../demo_project/).
 
 A **ready-to-open QuPath demo project** (bundled images, unclassified detections,
 classified ground-truth points, and the trained `cell_type_classifier`) is
 attached to each release as `multiplex-synthetic-data-demo-project-*.zip` -- open
-it, apply the classifier, and run the Confusion Matrix extension with no setup.
+it, apply the classifier, and run `check_against_ground_truth` with no setup.
 
 Each release also ships a `tme_NN_points.geojson` per image: the ground truth as
 QuPath point objects, one per cell, classified by cell type. Import it
@@ -81,19 +89,21 @@ $QP script scripts/06_classify_for_confusion_matrix.groovy --args PROJ --args gr
 
 Then score it -- run `check_against_ground_truth.groovy` (core QuPath), or the
 Confusion Matrix extension if you have it. The gate is deliberately imperfect
-(~97.0% on the Cell compartment), and its errors are the *real* ones this dataset
+(98.2% on the Cell compartment), and its errors are the *real* ones this dataset
 was built to expose:
 
-- **PanCK spillover at nest boundaries** mislabels some T cells as `tumor` -- the
-  `cd8_t -> tumor` and `helper_t -> tumor` off-diagonal cells (T cells sitting right
-  against a tumor nest).
-- **Dim / below-threshold** cells fall to no class, the largest error source for a
-  one-marker-at-a-time gate.
+- **PanCK spillover at nest boundaries** mislabels CD8 T cells as `tumor` -- the
+  `cd8_t -> tumor` off-diagonal cell (117 on Cell, 71 on Cytoplasm): T cells
+  sitting right against a tumor nest.
+- **Dim / below-threshold** cells are negative for every marker and so fall to
+  `fibroblast`, the one marker-negative type. That includes the 36 necrotic tumor
+  cells, which carry no marker at all.
 
 `logs/confusion_matrix.csv` holds this matrix (Cell and Cytoplasm compartments) so
 you can see the expected numbers without any GUI. For contrast, a *better*
 classifier -- `GATING_COMPARTMENT = "Cytoplasm"`, or the trained object classifier
-(`07_train_object_classifier.groovy`, ~99.6%+) -- has a far cleaner diagonal.
+(`07_train_object_classifier.groovy`) -- has a far cleaner diagonal; the offline
+multivariate classifier in `logs/classification.log` scores 0.994.
 
 ## How to reproduce
 

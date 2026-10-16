@@ -1,49 +1,54 @@
 CLASSIFICATION vs ground truth (Otsu-gated marker rules) -- Cytoplasm compartment
 ==============================================================
-Otsu thresholds (Cytoplasm mean): PanCK=67.5, aSMA=74.2, CD3=45.5, CD8=46.0, CD20=54.6, CD68=63.6
+Otsu thresholds (Cytoplasm mean): PanCK=77.4, CD31=34.0, CD3=31.4, CD8=31.2, CD20=38.1, CD68=60.7
 gating rules (first match): tumor=PanCK+; b_cell=CD20+; macrophage=CD68+;
-  cd8_t=CD3+&CD8+; helper_t=CD3+&CD8-; fibroblast=aSMA+
+  cd8_t=CD3+&CD8+; helper_t=CD3+&CD8-; endothelial=CD31+;
+  fibroblast=negative for every gate marker
 
-cells scored:      11416
-overall accuracy:  0.9679
-unknown (no gate): 304
+cells scored:      11412
+overall accuracy:  0.9828
+excluding necrotic:0.9844  (36 necrotic tumor cells carry no marker, so every gate calls them fibroblast)
 
 per-type precision / recall / F1:
-  tumor       P=0.985 R=0.999 F1=0.992  (n=2693)
-  fibroblast  P=1.000 R=0.991 F1=0.995  (n=3301)
-  cd8_t       P=0.998 R=0.913 F1=0.954  (n=1388)
-  helper_t    P=0.985 R=0.899 F1=0.940  (n=1392)
-  b_cell      P=1.000 R=0.947 F1=0.973  (n=1088)
-  macrophage  P=1.000 R=0.991 F1=0.995  (n=1554)
+  tumor       P=0.973 R=0.990 F1=0.981  (n=2586)
+  fibroblast  P=0.966 R=1.000 F1=0.983  (n=3189)
+  endothelial P=1.000 R=0.990 F1=0.995  (n=297)
+  cd8_t       P=1.000 R=0.927 F1=0.962  (n=1336)
+  helper_t    P=0.990 R=0.985 F1=0.987  (n=1381)
+  b_cell      P=1.000 R=0.971 F1=0.985  (n=1064)
+  macrophage  P=1.000 R=0.989 F1=0.995  (n=1559)
 
 CLASSIFICATION vs ground truth (Otsu-gated marker rules) -- Cell compartment
 ==============================================================
-Otsu thresholds (Cell mean): PanCK=34.4, aSMA=46.4, CD3=29.9, CD8=30.1, CD20=34.8, CD68=39.7
+Otsu thresholds (Cell mean): PanCK=48.1, CD31=24.8, CD3=23.1, CD8=22.6, CD20=26.5, CD68=44.0
 gating rules (first match): tumor=PanCK+; b_cell=CD20+; macrophage=CD68+;
-  cd8_t=CD3+&CD8+; helper_t=CD3+&CD8-; fibroblast=aSMA+
+  cd8_t=CD3+&CD8+; helper_t=CD3+&CD8-; endothelial=CD31+;
+  fibroblast=negative for every gate marker
 
-cells scored:      11416
-overall accuracy:  0.9701
-unknown (no gate): 184
+cells scored:      11412
+overall accuracy:  0.9819
+excluding necrotic:0.9830  (36 necrotic tumor cells carry no marker, so every gate calls them fibroblast)
 
 per-type precision / recall / F1:
-  tumor       P=0.950 R=0.999 F1=0.974  (n=2693)
-  fibroblast  P=1.000 R=0.973 F1=0.986  (n=3301)
-  cd8_t       P=0.998 R=0.917 F1=0.956  (n=1388)
-  helper_t    P=0.991 R=0.946 F1=0.968  (n=1392)
-  b_cell      P=1.000 R=0.980 F1=0.990  (n=1088)
-  macrophage  P=0.999 R=0.976 F1=0.988  (n=1554)
+  tumor       P=0.956 R=0.991 F1=0.973  (n=2586)
+  fibroblast  P=0.975 R=1.000 F1=0.987  (n=3189)
+  endothelial P=1.000 R=0.997 F1=0.998  (n=297)
+  cd8_t       P=1.000 R=0.902 F1=0.948  (n=1336)
+  helper_t    P=0.994 R=0.988 F1=0.991  (n=1381)
+  b_cell      P=1.000 R=0.989 F1=0.994  (n=1064)
+  macrophage  P=1.000 R=0.986 F1=0.993  (n=1559)
 
 MULTIVARIATE classifier (nearest class-centroid, 6 Cell markers, 50/50 train/test)
 ==============================================================
-test cells:    5708
-test accuracy: 0.9963
+test cells:    5706
+test accuracy: 0.9944
 
 per-type recall (test half):
-  b_cell      1.000 (n=534)
-  cd8_t       0.974 (n=699)
-  fibroblast  1.000 (n=1642)
-  helper_t    0.996 (n=701)
-  macrophage  1.000 (n=766)
-  tumor       1.000 (n=1366)
+  b_cell      0.995 (n=554)
+  cd8_t       0.995 (n=617)
+  endothelial 0.987 (n=155)
+  fibroblast  1.000 (n=1596)
+  helper_t    0.992 (n=722)
+  macrophage  0.991 (n=802)
+  tumor       0.991 (n=1260)
 

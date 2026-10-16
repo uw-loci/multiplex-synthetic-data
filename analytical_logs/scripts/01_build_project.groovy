@@ -1,6 +1,8 @@
 /*
  * 01_build_project.groovy -- create a QuPath project from the dataset images and
- * run watershed cell detection on each image.
+ * run watershed cell detection on each image. Each image's synth.* variation
+ * metadata (the "synth" block of params/<image>_params.json, v2.0 and later) is
+ * copied into its project entry, so QuPath shows what was varied per image.
  *
  * Run (first arg = project dir to create; remaining args = image paths):
  *   QuPath script 01_build_project.groovy --args PROJ --args tme_00.tif --args tme_01.tif ...
@@ -53,6 +55,17 @@ for (int i = 1; i < args.size(); i++) {
     def imageData = entry.readImageData()
     imageData.setImageType(ImageData.ImageType.FLUORESCENCE)
     entry.setImageName(new File(path).getName())
+    // Variation metadata (synth.* keys): copied verbatim from the image's
+    // _params.json, looked for in ../params/ (release layout) or next to the image.
+    int nSynth = 0
+    def img = new File(path).getCanonicalFile()
+    def stem = img.getName().replaceAll(/\.tif+$/, "")
+    def pj = [new File(img.getParentFile().getParentFile(), "params/${stem}_params.json"),
+              new File(img.getParentFile(), "${stem}_params.json")].find { it.isFile() }
+    if (pj != null) {
+        def synth = new groovy.json.JsonSlurper().parse(pj)?.synth
+        synth?.each { k, v -> entry.putMetadataValue(k as String, v as String); nSynth++ }
+    }
     def server = imageData.getServer()
     def roi = ROIs.createRectangleROI(0, 0, server.getWidth(), server.getHeight(), ImagePlane.getDefaultPlane())
     def ann = PathObjects.createAnnotationObject(roi)
@@ -60,7 +73,7 @@ for (int i = 1; i < args.size(); i++) {
     imageData.getHierarchy().getSelectionModel().setSelectedObject(ann)
     QP.runPlugin('qupath.imagej.detect.cells.WatershedCellDetection', imageData, detJson)
     entry.saveImageData(imageData)
-    println "IMG ${entry.getImageName()} cells=${imageData.getHierarchy().getDetectionObjects().size()}"
+    println "IMG ${entry.getImageName()} cells=${imageData.getHierarchy().getDetectionObjects().size()} synth_keys=${nSynth}"
 }
 project.syncChanges()
 println "PROJECT_SAVED " + projDir.getAbsolutePath()

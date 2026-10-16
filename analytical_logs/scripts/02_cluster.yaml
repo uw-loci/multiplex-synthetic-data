@@ -15,7 +15,7 @@ clustering:
   measurements:               # the feature set -- one per-cell "Cell: <marker> mean"
     - "Cell: PanCK mean"       #   (Nucleus: Ki67 mean is the nuclear-marker exception)
     - "Nucleus: Ki67 mean"
-    - "Cell: aSMA mean"
+    - "Cell: CD31 mean"
     - "Cell: CD3 mean"
     - "Cell: CD8 mean"
     - "Cell: CD20 mean"

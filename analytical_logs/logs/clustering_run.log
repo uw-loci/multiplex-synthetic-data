@@ -1,42 +1,48 @@
-12:06:36.930 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:06:36,929 - qpcat.appose - INFO - QP-CAT environment v0.2.7
-12:06:36.930 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:06:36,929 - qpcat.appose - INFO -   scikit-learn: 1.9.0
-12:06:36.930 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:06:36,930 - qpcat.appose - INFO -   scanpy: 1.11.5
-12:06:36.930 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:06:36,930 - qpcat.appose - INFO -   umap-learn: 0.5.12
-12:06:36.931 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:06:36,931 - qpcat.appose - INFO -   squidpy: 1.6.6
-12:06:36.932 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:06:36,932 - qpcat.appose - INFO -   harmonypy: 0.2.0
-12:06:36.979 [main] [INFO ] q.e.q.s.ApposeClusteringService - Running environment verification...
-12:06:36.981 [main] [INFO ] q.e.q.s.ApposeClusteringService - Verified: scikit-learn 1.9.0, scanpy 1.11.5, umap 0.5.12, env 0.2.7 (harmonypy=available, pybanksy=available)
-12:06:37.149 [main] [INFO ] q.e.q.controller.ClusteringWorkflow - Combined extraction: 1530 cells x 7 measurements across 1 images
-12:06:51.841 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:06:51,841 - qpcat.spatial_stats - INFO - Ripley L shape matched: dict(L_stat DataFrame) (squidpy=1.6.6)
-[qpcat-batch] 2026-09-21 12:06:55 OK    [1/8] image=tme_00.tif step=clustering clusters=14 cells=1530 complete
-[qpcat-batch] 2026-09-21 12:06:55 INFO  [1/8] image=tme_00.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-12:06:55.342 [main] [INFO ] q.e.q.controller.ClusteringWorkflow - Combined extraction: 1568 cells x 7 measurements across 1 images
-12:07:02.943 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:07:02,943 - qpcat.spatial_stats - INFO - Ripley L shape matched: dict(L_stat DataFrame) (squidpy=1.6.6)
-[qpcat-batch] 2026-09-21 12:07:06 OK    [2/8] image=tme_01.tif step=clustering clusters=15 cells=1568 complete
-[qpcat-batch] 2026-09-21 12:07:06 INFO  [2/8] image=tme_01.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-12:07:06.160 [main] [INFO ] q.e.q.controller.ClusteringWorkflow - Combined extraction: 1430 cells x 7 measurements across 1 images
-12:07:12.803 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:07:12,803 - qpcat.spatial_stats - INFO - Ripley L shape matched: dict(L_stat DataFrame) (squidpy=1.6.6)
-[qpcat-batch] 2026-09-21 12:07:15 OK    [3/8] image=tme_02.tif step=clustering clusters=14 cells=1430 complete
-[qpcat-batch] 2026-09-21 12:07:15 INFO  [3/8] image=tme_02.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-12:07:15.607 [main] [INFO ] q.e.q.controller.ClusteringWorkflow - Combined extraction: 1269 cells x 7 measurements across 1 images
-12:07:21.884 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:07:21,883 - qpcat.spatial_stats - INFO - Ripley L shape matched: dict(L_stat DataFrame) (squidpy=1.6.6)
-[qpcat-batch] 2026-09-21 12:07:25 OK    [4/8] image=tme_03.tif step=clustering clusters=15 cells=1269 complete
-[qpcat-batch] 2026-09-21 12:07:25 INFO  [4/8] image=tme_03.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-12:07:25.255 [main] [INFO ] q.e.q.controller.ClusteringWorkflow - Combined extraction: 1487 cells x 7 measurements across 1 images
-12:07:34.459 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:07:34,459 - qpcat.spatial_stats - INFO - Ripley L shape matched: dict(L_stat DataFrame) (squidpy=1.6.6)
-[qpcat-batch] 2026-09-21 12:07:38 OK    [5/8] image=tme_04.tif step=clustering clusters=14 cells=1487 complete
-[qpcat-batch] 2026-09-21 12:07:38 INFO  [5/8] image=tme_04.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-12:07:38.983 [main] [INFO ] q.e.q.controller.ClusteringWorkflow - Combined extraction: 1470 cells x 7 measurements across 1 images
-12:07:47.258 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:07:47,258 - qpcat.spatial_stats - INFO - Ripley L shape matched: dict(L_stat DataFrame) (squidpy=1.6.6)
-[qpcat-batch] 2026-09-21 12:07:50 OK    [6/8] image=tme_05.tif step=clustering clusters=15 cells=1470 complete
-[qpcat-batch] 2026-09-21 12:07:50 INFO  [6/8] image=tme_05.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-12:07:51.026 [main] [INFO ] q.e.q.controller.ClusteringWorkflow - Combined extraction: 1722 cells x 7 measurements across 1 images
-12:08:00.824 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:08:00,824 - qpcat.spatial_stats - INFO - Ripley L shape matched: dict(L_stat DataFrame) (squidpy=1.6.6)
-[qpcat-batch] 2026-09-21 12:08:04 OK    [7/8] image=tme_06.tif step=clustering clusters=18 cells=1722 complete
-[qpcat-batch] 2026-09-21 12:08:04 INFO  [7/8] image=tme_06.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-12:08:04.920 [main] [INFO ] q.e.q.controller.ClusteringWorkflow - Combined extraction: 945 cells x 7 measurements across 1 images
-12:08:11.828 [Appose-Service-0-Stderr] [INFO ] q.e.q.s.ApposeClusteringService - [QPCAT Python] [WORKER-0] 2026-09-21 12:08:11,828 - qpcat.spatial_stats - INFO - Ripley L shape matched: dict(L_stat DataFrame) (squidpy=1.6.6)
-[qpcat-batch] 2026-09-21 12:08:14 OK    [8/8] image=tme_07.tif step=clustering clusters=13 cells=945 complete
-[qpcat-batch] 2026-09-21 12:08:14 INFO  [8/8] image=tme_07.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-[qpcat-batch] 2026-09-21 12:08:14 OK    Run complete: 8/8 images, 0 errors, 0 figures
-[qpcat-batch] 2026-09-21 12:08:14 OK    Exit code: 0
+12:38:59.250 [main] [INFO ] qupath.lib.scripting.QP - Initializing type adapters
+[qpcat-batch] 2026-10-15 12:39:01 INFO  qpcat-batch v1.0 starting
+[qpcat-batch] 2026-10-15 12:39:01 INFO  Loaded YAML 02_cluster.local.yaml; schema version 1.0
+[qpcat-batch] 2026-10-15 12:39:01 INFO  Resolved scope: 1 project(s), 8 image(s)
+[qpcat-batch] 2026-10-15 12:39:01 INFO  [1/8] image=tme_00.tif starting
+[qpcat-batch] 2026-10-15 12:39:01 INFO  [1/8] image=tme_00.tif step=clustering type=leiden starting
+12:39:01.545 [main] [INFO ] q.e.q.s.ApposeClusteringService - Initializing QPCAT Appose environment...
+12:39:01.642 [main] [INFO ] q.e.q.s.ApposeClusteringService - QPCAT Appose environment built (72 ms)
+[qpcat-batch] 2026-10-15 12:39:32 OK    [1/8] image=tme_00.tif step=clustering clusters=12 cells=1476 complete
+[qpcat-batch] 2026-10-15 12:39:32 INFO  [1/8] image=tme_00.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-10-15 12:39:32 OK    [1/8] image=tme_00.tif elapsed_ms=30769 complete
+[qpcat-batch] 2026-10-15 12:39:32 INFO  [2/8] image=tme_01.tif starting
+[qpcat-batch] 2026-10-15 12:39:32 INFO  [2/8] image=tme_01.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-10-15 12:39:47 OK    [2/8] image=tme_01.tif step=clustering clusters=13 cells=1464 complete
+[qpcat-batch] 2026-10-15 12:39:47 INFO  [2/8] image=tme_01.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-10-15 12:39:47 OK    [2/8] image=tme_01.tif elapsed_ms=14716 complete
+[qpcat-batch] 2026-10-15 12:39:47 INFO  [3/8] image=tme_02.tif starting
+[qpcat-batch] 2026-10-15 12:39:47 INFO  [3/8] image=tme_02.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-10-15 12:40:00 OK    [3/8] image=tme_02.tif step=clustering clusters=11 cells=1489 complete
+[qpcat-batch] 2026-10-15 12:40:00 INFO  [3/8] image=tme_02.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-10-15 12:40:00 OK    [3/8] image=tme_02.tif elapsed_ms=12995 complete
+[qpcat-batch] 2026-10-15 12:40:00 INFO  [4/8] image=tme_03.tif starting
+[qpcat-batch] 2026-10-15 12:40:00 INFO  [4/8] image=tme_03.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-10-15 12:40:13 OK    [4/8] image=tme_03.tif step=clustering clusters=9 cells=1298 complete
+[qpcat-batch] 2026-10-15 12:40:13 INFO  [4/8] image=tme_03.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-10-15 12:40:13 OK    [4/8] image=tme_03.tif elapsed_ms=13664 complete
+[qpcat-batch] 2026-10-15 12:40:13 INFO  [5/8] image=tme_04.tif starting
+[qpcat-batch] 2026-10-15 12:40:13 INFO  [5/8] image=tme_04.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-10-15 12:40:26 OK    [5/8] image=tme_04.tif step=clustering clusters=12 cells=1479 complete
+[qpcat-batch] 2026-10-15 12:40:26 INFO  [5/8] image=tme_04.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-10-15 12:40:26 OK    [5/8] image=tme_04.tif elapsed_ms=13156 complete
+[qpcat-batch] 2026-10-15 12:40:26 INFO  [6/8] image=tme_05.tif starting
+[qpcat-batch] 2026-10-15 12:40:26 INFO  [6/8] image=tme_05.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-10-15 12:40:40 OK    [6/8] image=tme_05.tif step=clustering clusters=11 cells=1512 complete
+[qpcat-batch] 2026-10-15 12:40:40 INFO  [6/8] image=tme_05.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-10-15 12:40:40 OK    [6/8] image=tme_05.tif elapsed_ms=14029 complete
+[qpcat-batch] 2026-10-15 12:40:40 INFO  [7/8] image=tme_06.tif starting
+[qpcat-batch] 2026-10-15 12:40:40 INFO  [7/8] image=tme_06.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-10-15 12:40:55 OK    [7/8] image=tme_06.tif step=clustering clusters=13 cells=1719 complete
+[qpcat-batch] 2026-10-15 12:40:55 INFO  [7/8] image=tme_06.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-10-15 12:40:55 OK    [7/8] image=tme_06.tif elapsed_ms=14284 complete
+[qpcat-batch] 2026-10-15 12:40:55 INFO  [8/8] image=tme_07.tif starting
+[qpcat-batch] 2026-10-15 12:40:55 INFO  [8/8] image=tme_07.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-10-15 12:41:04 OK    [8/8] image=tme_07.tif step=clustering clusters=9 cells=986 complete
+[qpcat-batch] 2026-10-15 12:41:04 INFO  [8/8] image=tme_07.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-10-15 12:41:04 OK    [8/8] image=tme_07.tif elapsed_ms=9686 complete
+[qpcat-batch] 2026-10-15 12:41:04 OK    Run complete: 8/8 images, 0 errors, 0 figures
+[qpcat-batch] 2026-10-15 12:41:04 OK    Exit code: 0

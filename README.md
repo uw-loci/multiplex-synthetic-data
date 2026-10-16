@@ -7,7 +7,7 @@ spatial-neighborhood analysis** in [QuPath](https://qupath.github.io/), especial
 with the
 [QP-CAT extension](https://github.com/uw-loci/qupath-extension-cell-analysis-tools).
 
-![The eight synthetic images as color composites -- white DAPI, cyan PanCK, yellow Ki67, brown aSMA, green CD3, magenta CD8, blue CD20, red CD68. Cyan tumor nests, brown spindle-cell stroma, blue B-cell follicles, and scattered immune cells; the last two images are immune-rich and immune-poor variants.](docs/overview.png)
+![The eight synthetic images as color composites -- white DAPI, cyan PanCK, yellow Ki67, orange CD31, green CD3, magenta CD8, blue CD20, red CD68. Cyan tumor nests, orange vessels, unstained spindle-cell stroma, blue B-cell follicles, and scattered immune cells; each panel is labelled with what was varied in that image.](docs/overview.png)
 
 ## Why this exists
 
@@ -25,37 +25,47 @@ tissue, so you can run an analysis and check that it recovered the right answer.
 It is deliberately built so that **every major analysis has something to
 recover**:
 
-- **Clustering / phenotyping / classification** -- six cell types, each defined
-  by a distinct marker combination *and* a distinct morphology.
+- **Clustering / phenotyping / classification** -- seven cell types, each defined
+  by a distinct marker combination (one of them, the stromal fibroblast, by the
+  absence of any marker) *and* a distinct morphology.
 - **Spatial neighborhoods** -- the cells are organized into tissue niches (tumor
-  nests, B-cell follicles, an immune-infiltrated nest boundary, and stroma), so
+  nests, B-cell follicles, vessels, an immune-infiltrated nest boundary, and
+  stroma), so
   neighborhood-enrichment, co-occurrence, Ripley, and cellular-neighborhood
   analyses produce clear, correct signals.
 - **Batch correction** -- some images carry a deliberate per-image intensity
   offset, so integration methods (e.g. Harmony) have a batch effect to remove.
+  Each image **says what was varied** in its QuPath project-entry metadata
+  (`synth.*` keys, e.g. `synth.intensity_scale = 0.80`), so nobody has to
+  remember which slide was dimmed.
 
 It is synthetic and makes no claim to biological realism beyond what is needed to
 exercise these tools; it is a **test fixture and teaching aid**, not a substitute
-for real data. In particular it has **no extracellular matrix / collagen and no
-realistic tissue architecture** -- the "nests" and "follicles" are schematic blobs
-that exist only to give the spatial analyses something to find. Adding real tissue
+for real data. From v2.0 the *cells* look more like cells -- textured, irregular
+nuclei with per-cell brightness, curved shared borders, membrane-drawn lymphocyte
+markers, necrotic nest centres and mitoses, using a model ported from
+[SynOrg](https://github.com/bnsreenu/SynOrg) -- but the *tissue* is still
+schematic: there is **no extracellular matrix / collagen and no realistic tissue
+architecture**, and the "nests", "follicles" and "vessels" are shapes that exist
+to give the spatial analyses something to find. Adding real tissue
 structure (e.g. an ECM/collagen channel, more faithful tumor architecture) is a
 possible future direction, which is also why the dataset is named for what it is
 (multiplex synthetic data) rather than for any specific tissue.
 
 ## What's in it
 
-- **8 images**, 8 channels (DAPI + PanCK, Ki67, aSMA, CD3, CD8, CD20, CD68), 2D,
+- **8 images**, 8 channels (DAPI + PanCK, Ki67, CD31, CD3, CD8, CD20, CD68), 2D,
   `uint8`, **0.5 um/pixel**, ImageJ-hyperstack TIFF (opens in QuPath / Fiji with
   channels, pixel size, and channel names intact).
-- **6 cell types** (tumor, fibroblast, CD8 T, helper T, B cell, macrophage)
-  arranged into tissue niches.
+- **7 cell types** (tumor, fibroblast, endothelial, CD8 T, helper T, B cell,
+  macrophage) arranged into tissue niches.
 - **Per-cell ground-truth CSV** -- for every cell: type, tissue region, position,
-  morphology, and per-marker positivity + intensity.
+  morphology, state (viable / mitotic / necrotic), and per-marker positivity +
+  intensity.
 - **2 variant layouts** (immune-rich and immune-poor) and **3 batch-offset
-  images** for batch-correction testing.
+  images** for batch-correction testing, each recorded as variation metadata.
 
-![Zoomed features: an aligned band of parallel spindle nuclei (a tissue-edge / palisade), loose non-overlapping stroma with each fibroblast's cytoplasm sparing the nucleus, dendritic CD68 macrophages, a tumor nest with PanCK cytoplasm rings and Ki67-positive nuclei, and a B-cell follicle.](docs/features.png)
+![Zoomed features: a tumor nest with a continuous PanCK sheet and Ki67-positive nuclei, a B-cell follicle, a vessel of CD31-positive endothelium, an aligned band of parallel spindle nuclei, loose unmarked stroma, a CD68 macrophage, and T cells at a nest boundary.](docs/features.png)
 
 Full channel/type/region tables, the QuPath cell-detection recipe, a
 feature-by-feature guide to what each analysis should recover, and the
@@ -65,13 +75,19 @@ ground-truth CSV column reference are in **[INSTRUCTIONS.md](INSTRUCTIONS.md)**.
 
 Two downloads are attached to the
 **[latest release](https://github.com/uw-loci/multiplex-synthetic-data/releases/latest)**
-(the data is distributed only as release assets, not stored in the repository):
+(the data is distributed only as release assets, not stored in the repository).
+**The BINA / I2K 2026 workshop uses
+[v1.2](https://github.com/uw-loci/multiplex-synthetic-data/releases/tag/v1.2)**
+(aSMA instead of CD31, six cell types) -- use that release, and its
+[INSTRUCTIONS.md](https://github.com/uw-loci/multiplex-synthetic-data/blob/v1.2/INSTRUCTIONS.md),
+if you are following the workshop guide. Each release has two downloads:
 
 - **`multiplex-synthetic-data-*.zip`** -- the dataset, with each file type in its
   own folder so you can point QuPath's *Add images* straight at `images/`:
   `images/` (8 TIFFs), `ground_truth/` (per-image + combined CSVs, and
   QuPath-importable classified points), `params/` (per-image generation
-  parameters), and `analytical_logs/` (scripts + logs to reproduce the analyses).
+  parameters and variation metadata), `settings.json` (the generator settings),
+  and `analytical_logs/` (scripts + logs to reproduce the analyses).
 - **`multiplex-synthetic-data-demo-project-*.zip`** -- see below.
 
 ### Ready-to-run demo project
@@ -82,7 +98,8 @@ on first open you point it at that folder **once** -- run the included
 `fix_image_paths` project script, or use QuPath's locate-missing-images prompt.) It
 ships the cell **detections** (unclassified), the **ground-truth points** as
 classified annotations, a **trained object classifier** in
-`classifiers/object_classifiers/`, and a set of **project scripts**. The whole demo
+`classifiers/object_classifiers/`, the **variation metadata** on every entry, and a
+set of **project scripts**. The whole demo
 then runs with **core QuPath alone**:
 open it, apply the classifier (Automate > Project scripts >
 `apply_trained_classifier`, or the imperfect `classify_with_marker_gate` if you
@@ -91,7 +108,8 @@ confusion matrix + accuracy to the log and highlights the misclassified cells in
 the viewer. (The QuPath **Confusion Matrix** extension gives the same comparison
 interactively and is how it's shown in the workshop, but it is not publicly
 installable at this time, so the script is the way to reproduce it yourself today.)
-Details in the project's `DEMO_README.md`.
+Details in the project's `DEMO_README.md`; the scripts that build it are in
+[`demo_project/`](demo_project/).
 
 ## Quick start
 
@@ -114,10 +132,16 @@ in **[INSTRUCTIONS.md](INSTRUCTIONS.md)**.
   (clustering, phenotyping, autoencoder classification, spatial stats, batch
   correction).
 - **[QuPath](https://qupath.github.io/)** -- the host application.
+- **[SynOrg](https://github.com/bnsreenu/SynOrg)** (S. Bhattiprolu, *Parametric
+  physics-based synthesis of 3D organoid microscopy*, bioRxiv 2026,
+  doi:[10.64898/2026.04.16.719066](https://doi.org/10.64898/2026.04.16.719066))
+  -- the source of the cell-appearance model used from v2.0.
 
 The Python generator that produces this data is maintained separately by
-[LOCI](https://eliceirilab.org/) and is **not distributed here** -- this
-repository ships the data and its documentation only.
+[LOCI](https://eliceirilab.org/) and is **not distributed here** yet -- this
+repository ships the data, its documentation, and the scripts that analyse it and
+build the demo project. Every release's `settings.json` records the settings it was
+generated with.
 
 ## License
 

@@ -33,15 +33,18 @@ from scipy.spatial import cKDTree
 
 # ==== USER-EDITABLE PARAMETERS ==========================================
 # Ground-truth cell types (must match the `cell_type` column in all_groundtruth.csv).
-TYPES = ["tumor", "fibroblast", "cd8_t", "helper_t", "b_cell", "macrophage"]
+TYPES = ["tumor", "fibroblast", "endothelial", "cd8_t", "helper_t", "b_cell", "macrophage"]
 # Markers dumped by 03_dump_cells.groovy (a "Cell_<marker>" column each).
-MARKERS = ["PanCK", "Ki67", "aSMA", "CD3", "CD8", "CD20", "CD68"]
+MARKERS = ["PanCK", "Ki67", "CD31", "CD3", "CD8", "CD20", "CD68"]
 # Max distance (pixels) to match a detected cell to its nearest ground-truth cell.
 MATCH_RADIUS_PX = 6.0
 # Compartments to gate classification on (a row is scored once per compartment).
 # Cytoplasmic markers live in the CYTOPLASM (the nucleus is a dark hole and the
 # 5 um "Cell" expansion also picks up neighbours), so Cytoplasm gates cleaner.
 GATING_COMPARTMENTS = ["Cytoplasm", "Cell"]
+# Ground-truth states of necrotic tumor cells: they keep cell_type=tumor but lose
+# every marker, so marker-based methods cannot call them tumor.
+NECROTIC = {"ghost", "pyknotic", "karyorrhectic"}
 # The gating rules live in classification_report() below; thresholds are computed
 # per marker by Otsu (no hardcoded intensity cutoffs).
 # ========================================================================
@@ -66,6 +69,7 @@ def load_matched(cells_csv, gt_csv):
             dist, gi = tree.query([float(d["x_px"]), float(d["y_px"])], distance_upper_bound=MATCH_RADIUS_PX)
             if not np.isfinite(dist):
                 continue
+            d["_gt_state"] = grows[gi].get("state", "viable")
             rows.append((img, d, grows[gi]["cell_type"]))
     return rows
 
@@ -140,14 +144,16 @@ def gate_predict(rows, comp):
     given compartment. Returns (pred, y_true, thresholds). This is the exact same
     rule set 06_classify_for_confusion_matrix.groovy applies inside QuPath, so the
     confusion matrix here reproduces what the Confusion Matrix extension shows."""
-    gm = ["PanCK", "aSMA", "CD3", "CD8", "CD20", "CD68"]
+    gm = ["PanCK", "CD31", "CD3", "CD8", "CD20", "CD68"]
     X = {m: np.array([float(d.get(f"{comp}_{m}") or 0.0) for _, d, _ in rows]) for m in gm}
     yt = np.array([t for _, _, t in rows])
     thr = {m: otsu(X[m]) for m in gm}
     pos = {m: X[m] >= thr[m] for m in thr}
-    pred = np.full(len(yt), "unknown", dtype=object)
+    # Fibroblasts carry no marker, so a cell negative for every gate marker is
+    # called fibroblast; there is no "unknown" class from v2.0 on.
+    pred = np.full(len(yt), "fibroblast", dtype=object)
     # first-match gating (distinct type markers; T cells split by CD8)
-    pred[pos["aSMA"]] = "fibroblast"
+    pred[pos["CD31"]] = "endothelial"
     pred[pos["CD68"]] = "macrophage"
     pred[pos["CD20"]] = "b_cell"
     pred[pos["CD3"] & pos["CD8"]] = "cd8_t"
@@ -164,10 +170,16 @@ def classification_report(rows, out, comp, mode):
         f.write("=" * 62 + "\n")
         f.write(f"Otsu thresholds ({comp} mean): " + ", ".join(f"{m}={thr[m]:.1f}" for m in thr) + "\n")
         f.write("gating rules (first match): tumor=PanCK+; b_cell=CD20+; macrophage=CD68+;\n")
-        f.write("  cd8_t=CD3+&CD8+; helper_t=CD3+&CD8-; fibroblast=aSMA+\n\n")
+        f.write("  cd8_t=CD3+&CD8+; helper_t=CD3+&CD8-; endothelial=CD31+;\n")
+        f.write("  fibroblast=negative for every gate marker\n\n")
         f.write(f"cells scored:      {len(yt)}\n")
         f.write(f"overall accuracy:  {acc:.4f}\n")
-        f.write(f"unknown (no gate): {(pred=='unknown').sum()}\n\n")
+        nec = np.array([d["_gt_state"] in NECROTIC for _, d, _ in rows])
+        if nec.any():
+            acc_v = float((pred[~nec] == yt[~nec]).mean())
+            f.write(f"excluding necrotic:{acc_v:.4f}  ({int(nec.sum())} necrotic tumor cells carry no "
+                    f"marker, so every gate calls them fibroblast)\n")
+        f.write("\n")
         f.write("per-type precision / recall / F1:\n")
         for t in TYPES:
             tp = int(((pred == t) & (yt == t)).sum())
@@ -187,7 +199,7 @@ def multivariate_report(rows, out, comp="Cell", seed=0):
     the labelled points looks like: using all markers jointly is robust to the
     single-marker spillover that limits Otsu gating, so it recovers the clean data
     much more closely."""
-    gm = ["PanCK", "aSMA", "CD3", "CD8", "CD20", "CD68"]
+    gm = ["PanCK", "CD31", "CD3", "CD8", "CD20", "CD68"]
     X = np.array([[float(d.get(f"{comp}_{m}") or 0.0) for m in gm] for _, d, _ in rows])
     yt = np.array([t for _, _, t in rows])
     Xz = (X - X.mean(0)) / (X.std(0) + 1e-9)
@@ -216,7 +228,7 @@ def confusion_report(rows, out, comps):
     per compartment. This is the same matrix the QuPath Confusion Matrix extension
     renders when you run 06_classify_for_confusion_matrix.groovy then compare the
     predicted PathClasses to the imported ground-truth points."""
-    cols = TYPES + ["unknown"]
+    cols = TYPES
     with open(out, "w", newline="") as f:
         w = csv.writer(f)
         for ci, comp in enumerate(comps):
@@ -242,8 +254,10 @@ def neighborhood_report(result_json, dom, img_name, out):
     if not ne or not names:
         return False
     ne = np.array(ne, dtype=float)
-    cl2type = {cl.replace("Cluster ", ""): d for (img, cl), d in dom.items() if img == img_name}
-    lab = [cl2type.get(str(n), "?") for n in names]
+    # QP-CAT names clusters "Cluster 00" in PathClasses but "0" in the result
+    # JSON (zero-padding varies by version), so match on the number.
+    cl2type = {int(cl.replace("Cluster ", "")): d for (img, cl), d in dom.items() if img == img_name}
+    lab = [cl2type.get(int(n), "?") for n in names]
     cell = defaultdict(list)
     for i in range(len(names)):
         for j in range(len(names)):

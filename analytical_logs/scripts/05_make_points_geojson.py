@@ -10,7 +10,8 @@ from collections import defaultdict
 # ==== USER-EDITABLE PARAMETERS ==========================================
 # Classification display colors (R, G, B, 0-255) per cell type.
 TYPE_COLORS = {
-    "tumor": [220, 20, 60], "fibroblast": [160, 110, 40], "cd8_t": [255, 0, 255],
+    "tumor": [220, 20, 60], "fibroblast": [160, 110, 40], "endothelial": [150, 80, 220],
+    "cd8_t": [255, 0, 255],
     "helper_t": [0, 180, 0], "b_cell": [60, 130, 255], "macrophage": [255, 140, 0],
 }
 # ========================================================================

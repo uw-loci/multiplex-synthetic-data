@@ -1,9 +1,9 @@
-IMG tme_00.tif cells=1530
-IMG tme_01.tif cells=1568
-IMG tme_02.tif cells=1430
-IMG tme_03.tif cells=1269
-IMG tme_04.tif cells=1487
-IMG tme_05.tif cells=1470
-IMG tme_06.tif cells=1722
-IMG tme_07.tif cells=945
-PROJECT_SAVED <PROJECT_DIR>
+IMG tme_00.tif cells=1476 synth_keys=10
+IMG tme_01.tif cells=1464 synth_keys=10
+IMG tme_02.tif cells=1489 synth_keys=10
+IMG tme_03.tif cells=1298 synth_keys=10
+IMG tme_04.tif cells=1479 synth_keys=10
+IMG tme_05.tif cells=1512 synth_keys=10
+IMG tme_06.tif cells=1719 synth_keys=10
+IMG tme_07.tif cells=986 synth_keys=10
+PROJECT_SAVED <WORK>/analysis_project

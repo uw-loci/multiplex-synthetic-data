@@ -16,10 +16,10 @@
  * ==== USER-EDITABLE PARAMETERS ==========================================
  */
 // Feature measurements (must match those on the detections). Ki67 is nuclear.
-MEAS = ["Cell: PanCK mean", "Nucleus: Ki67 mean", "Cell: aSMA mean",
+MEAS = ["Cell: PanCK mean", "Nucleus: Ki67 mean", "Cell: CD31 mean",
         "Cell: CD3 mean", "Cell: CD8 mean", "Cell: CD20 mean", "Cell: CD68 mean"]
 // Class names (must match the ground-truth point classes).
-CLASSES = ["tumor", "fibroblast", "cd8_t", "helper_t", "b_cell", "macrophage"]
+CLASSES = ["tumor", "fibroblast", "endothelial", "cd8_t", "helper_t", "b_cell", "macrophage"]
 // ========================================================================
 
 import qupath.lib.projects.ProjectIO

@@ -12,7 +12,7 @@
  *
  * ==== USER-EDITABLE PARAMETERS ==========================================
  */
-MARKERS = ["PanCK", "Ki67", "aSMA", "CD3", "CD8", "CD20", "CD68"]  // markers to dump
+MARKERS = ["PanCK", "Ki67", "CD31", "CD3", "CD8", "CD20", "CD68"]  // markers to dump
 COMPARTMENTS = ["Cell", "Cytoplasm", "Nucleus"]                    // QuPath measurement compartments
 // ========================================================================
 

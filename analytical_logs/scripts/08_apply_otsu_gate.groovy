@@ -10,10 +10,11 @@
  * Unlike 06 it does NOT import the ground-truth points -- the demo project already
  * ships them as classified point annotations.
  *
- * It is right about 97-98% of the time, and its mistakes are real: the 5 um cell
+ * It is right about 98% of the time, and its mistakes are real: the 5 um cell
  * expansion picks up PanCK from neighbouring tumour cytoplasm, so T cells sitting
- * at the edge of a tumour nest get called tumor. A few cells match no rule at all
- * and are left unclassified. Both are the point: they give you something to find
+ * at the edge of a tumour nest get called tumor. Fibroblasts carry no marker, so a
+ * cell negative for every marker is called fibroblast -- including dim cells and
+ * the marker-free necrotic tumor cells. Both are the point: they give you something to find
  * with the Confusion Matrix, and something to repair with Classify Object Subset.
  *
  * ==== USER-EDITABLE PARAMETERS ==========================================
@@ -22,10 +23,11 @@
 // measurement and shows the most boundary-spillover errors; "Cytoplasm" is cleaner.
 GATING_COMPARTMENT = "Cell"
 // Markers used by the gate (Ki67 is nuclear-only and excluded from gating).
-GATE_MARKERS = ["PanCK", "aSMA", "CD3", "CD8", "CD20", "CD68"]
+GATE_MARKERS = ["PanCK", "CD31", "CD3", "CD8", "CD20", "CD68"]
 // Display colors (R,G,B) for the predicted classes; match the ground-truth points.
 TYPE_COLORS = [
     "tumor":      [220, 20, 60],  "fibroblast": [160, 110, 40],
+    "endothelial": [150, 80, 220],
     "cd8_t":      [255, 0, 255],  "helper_t":   [0, 180, 0],
     "b_cell":     [60, 130, 255], "macrophage": [255, 140, 0],
 ]
@@ -96,8 +98,8 @@ for (cell in cells) {
         def v = ml.get("${GATING_COMPARTMENT}: ${m} mean")
         pos[m] = (v != null && !Double.isNaN(v) && v >= thr[m])
     }
-    String pred = null
-    if (pos["aSMA"]) pred = "fibroblast"
+    String pred = "fibroblast"   // fibroblasts carry no marker: negative for every gate
+    if (pos["CD31"]) pred = "endothelial"
     if (pos["CD68"]) pred = "macrophage"
     if (pos["CD20"]) pred = "b_cell"
     if (pos["CD3"] && pos["CD8"]) pred = "cd8_t"
