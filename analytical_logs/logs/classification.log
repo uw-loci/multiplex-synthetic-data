@@ -6,11 +6,12 @@ gating rules (first match): tumor=PanCK+; b_cell=CD20+; macrophage=CD68+;
   fibroblast=negative for every gate marker
 
 cells scored:      11412
-overall accuracy:  0.9828
-excluding necrotic:0.9844  (36 necrotic tumor cells carry no marker, so every gate calls them fibroblast)
+overall accuracy:  0.9813
+excluding necrotic:0.9844  (36 necrotic cells carry no marker and no gate rule can call them)
 
 per-type precision / recall / F1:
-  tumor       P=0.973 R=0.990 F1=0.981  (n=2586)
+  tumor       P=0.967 R=0.997 F1=0.981  (n=2550)
+  necrotic    P=0.000 R=0.000 F1=0.000  (n=36)
   fibroblast  P=0.966 R=1.000 F1=0.983  (n=3189)
   endothelial P=1.000 R=0.990 F1=0.995  (n=297)
   cd8_t       P=1.000 R=0.927 F1=0.962  (n=1336)
@@ -26,11 +27,12 @@ gating rules (first match): tumor=PanCK+; b_cell=CD20+; macrophage=CD68+;
   fibroblast=negative for every gate marker
 
 cells scored:      11412
-overall accuracy:  0.9819
-excluding necrotic:0.9830  (36 necrotic tumor cells carry no marker, so every gate calls them fibroblast)
+overall accuracy:  0.9799
+excluding necrotic:0.9830  (36 necrotic cells carry no marker and no gate rule can call them)
 
 per-type precision / recall / F1:
-  tumor       P=0.956 R=0.991 F1=0.973  (n=2586)
+  tumor       P=0.948 R=0.996 F1=0.971  (n=2550)
+  necrotic    P=0.000 R=0.000 F1=0.000  (n=36)
   fibroblast  P=0.975 R=1.000 F1=0.987  (n=3189)
   endothelial P=1.000 R=0.997 F1=0.998  (n=297)
   cd8_t       P=1.000 R=0.902 F1=0.948  (n=1336)
@@ -41,7 +43,7 @@ per-type precision / recall / F1:
 MULTIVARIATE classifier (nearest class-centroid, 6 Cell markers, 50/50 train/test)
 ==============================================================
 test cells:    5706
-test accuracy: 0.9944
+test accuracy: 0.9625
 
 per-type recall (test half):
   b_cell      0.995 (n=554)
@@ -49,6 +51,7 @@ per-type recall (test half):
   endothelial 0.987 (n=155)
   fibroblast  1.000 (n=1596)
   helper_t    0.992 (n=722)
-  macrophage  0.991 (n=802)
-  tumor       0.991 (n=1260)
+  macrophage  0.990 (n=802)
+  necrotic    0.562 (n=16)
+  tumor       0.851 (n=1244)
 

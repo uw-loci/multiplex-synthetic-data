@@ -1,21 +1,23 @@
-"# Otsu-gate confusion matrix -- Cytoplasm compartment (accuracy 0.9828, n=11412)"
-actual\predicted,tumor,fibroblast,endothelial,cd8_t,helper_t,b_cell,macrophage,total
-tumor,2559,27,0,0,0,0,0,2586
-fibroblast,0,3189,0,0,0,0,0,3189
-endothelial,0,3,294,0,0,0,0,297
-cd8_t,71,12,0,1239,14,0,0,1336
-helper_t,0,21,0,0,1360,0,0,1381
-b_cell,0,31,0,0,0,1033,0,1064
-macrophage,0,17,0,0,0,0,1542,1559
-total,2630,3300,294,1239,1374,1033,1542,11412
+"# Otsu-gate confusion matrix -- Cytoplasm compartment (accuracy 0.9813, n=11412)"
+actual\predicted,tumor,necrotic,fibroblast,endothelial,cd8_t,helper_t,b_cell,macrophage,total
+tumor,2542,0,8,0,0,0,0,0,2550
+necrotic,17,0,19,0,0,0,0,0,36
+fibroblast,0,0,3189,0,0,0,0,0,3189
+endothelial,0,0,3,294,0,0,0,0,297
+cd8_t,71,0,12,0,1239,14,0,0,1336
+helper_t,0,0,21,0,0,1360,0,0,1381
+b_cell,0,0,31,0,0,0,1033,0,1064
+macrophage,0,0,17,0,0,0,0,1542,1559
+total,2630,0,3300,294,1239,1374,1033,1542,11412
 
-"# Otsu-gate confusion matrix -- Cell compartment (accuracy 0.9819, n=11412)"
-actual\predicted,tumor,fibroblast,endothelial,cd8_t,helper_t,b_cell,macrophage,total
-tumor,2562,24,0,0,0,0,0,2586
-fibroblast,0,3189,0,0,0,0,0,3189
-endothelial,0,1,296,0,0,0,0,297
-cd8_t,117,6,0,1205,8,0,0,1336
-helper_t,0,17,0,0,1364,0,0,1381
-b_cell,0,12,0,0,0,1052,0,1064
-macrophage,1,21,0,0,0,0,1537,1559
-total,2680,3270,296,1205,1372,1052,1537,11412
+"# Otsu-gate confusion matrix -- Cell compartment (accuracy 0.9799, n=11412)"
+actual\predicted,tumor,necrotic,fibroblast,endothelial,cd8_t,helper_t,b_cell,macrophage,total
+tumor,2540,0,10,0,0,0,0,0,2550
+necrotic,22,0,14,0,0,0,0,0,36
+fibroblast,0,0,3189,0,0,0,0,0,3189
+endothelial,0,0,1,296,0,0,0,0,297
+cd8_t,117,0,6,0,1205,8,0,0,1336
+helper_t,0,0,17,0,0,1364,0,0,1381
+b_cell,0,0,12,0,0,0,1052,0,1064
+macrophage,1,0,21,0,0,0,0,1537,1559
+total,2680,0,3270,296,1205,1372,1052,1537,11412

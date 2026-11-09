@@ -14,7 +14,7 @@
  * expansion picks up PanCK from neighbouring tumour cytoplasm, so T cells sitting
  * at the edge of a tumour nest get called tumor. Fibroblasts carry no marker, so a
  * cell negative for every marker is called fibroblast -- including dim cells and
- * the marker-free necrotic tumor cells. Both are the point: they give you something to find
+ * the necrotic cells, a class no gate rule can call. Both are the point: they give you something to find
  * with the Confusion Matrix, and something to repair with Classify Object Subset.
  *
  * ==== USER-EDITABLE PARAMETERS ==========================================
@@ -27,7 +27,7 @@ GATE_MARKERS = ["PanCK", "CD31", "CD3", "CD8", "CD20", "CD68"]
 // Display colors (R,G,B) for the predicted classes; match the ground-truth points.
 TYPE_COLORS = [
     "tumor":      [220, 20, 60],  "fibroblast": [160, 110, 40],
-    "endothelial": [150, 80, 220],
+    "endothelial": [150, 80, 220], "necrotic": [128, 128, 128],
     "cd8_t":      [255, 0, 255],  "helper_t":   [0, 180, 0],
     "b_cell":     [60, 130, 255], "macrophage": [255, 140, 0],
 ]

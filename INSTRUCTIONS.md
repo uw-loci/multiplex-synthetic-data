@@ -4,10 +4,10 @@ This is the detailed guide: what the data contains, how to load and detect cells
 in QuPath, what each analysis should recover, and the ground-truth format. For
 the short version see [README.md](README.md).
 
-This guide describes **v2.0**. The BINA / I2K 2026 workshop uses **v1.2**, which
-has an aSMA channel instead of CD31 and six cell types instead of seven; its guide
+This guide describes **v2.1**. The BINA / I2K 2026 workshop uses **v1.2**, which
+has an aSMA channel instead of CD31, six cell types and no necrotic cells; its guide
 is [INSTRUCTIONS.md at v1.2](https://github.com/uw-loci/multiplex-synthetic-data/blob/v1.2/INSTRUCTIONS.md).
-What changed is listed in [section 10](#10-changes-from-v12).
+What changed is listed in [section 10](#10-changes).
 
 ---
 
@@ -76,9 +76,28 @@ marker", not by a marker of their own.
 
 ---
 
-## 3. Cell types (7)
+## 3. Cell types (7) and the necrotic class
 
-Each type is distinguished by **both markers and morphology**, so it can be
+> **What is a tumor cell? Read this before scoring anything.**
+> The ground truth has **eight classes, not seven**. Besides the seven cell types
+> below, cells in a dead (necrotic) nest center are labelled **`necrotic`**. They
+> were tumor cells, but a dead tumor cell is not really a tumor cell any more, and
+> whether to count it as one is a labelling *call*, not a measurement. This panel
+> has **no cell-death marker**, and in this dataset necrotic cells carry **no
+> marker at all**, so nothing in the marker channels says "dead tumor": a gate or a
+> marker-only clustering will call them fibroblasts (the other marker-negative
+> class), or tumor where they pick up their neighbors' PanCK. What does set them
+> apart is the **nucleus**: shrunken and bright, or full size and faint, sitting in a
+> nest center. A classifier given nucleus area, DAPI intensity and circularity finds
+> most of them (section 6).
+>
+> **This is the synthetic interpretation of a dead cell, not a model of real
+> necrosis.** Real necrotic regions look different (debris, fragments, often
+> nonspecific staining or autofluorescence) and real panels may include a death or
+> viability marker. Use these cells to test whether a pipeline *notices* a class it
+> has no marker for, not to learn what necrosis looks like.
+
+Each cell type is distinguished by **both markers and morphology**, so it can be
 recovered from measurements (clustering / phenotyping), from image patches
 (morphology-based classification), or both.
 
@@ -91,23 +110,20 @@ recovered from measurements (clustering / phenotyping), from image patches
 | **helper_t** | CD3+ (CD8-) | small, round | stroma + boundary |
 | **b_cell** | CD20+ | small, round | follicles |
 | **macrophage** | CD68+ | medium (~13 um); some irregular / dendritic | dispersed, some in vessels |
+| **necrotic** (not a cell type: see the box) | none | ghost: full size, faint; pyknotic: shrunken, bright; karyorrhectic: shrunken, mid-bright | centers of nests deeper than 75 um |
 
 Note that **CD8 T and helper T differ only by CD8** -- a deliberately subtle
 split to test cluster resolution / a two-marker gate.
 
-**Cell states.** Most cells are `viable`. Tumor nests deeper than 75 um have a
-**necrotic centre** (the innermost 28% of the nest depth): its cells carry no
-markers and their nuclei are `ghost` (full size, faint), `pyknotic` (shrunken,
-bright) or `karyorrhectic` (shrunken, mid-bright), and 30% of them are missing
-altogether. About 3% of tumor cells are `mitotic`: a condensed, bar-shaped nucleus
-with bright Ki67. The `state` column records which.
-
-Necrotic cells keep `cell_type = tumor` but are **negative for every marker**, so
-any marker-based method (a gate, clustering, a trained classifier) will put them
-with the marker-negative fibroblasts. That is the correct reading of the pixels;
-when scoring, either drop rows whose `state` is `ghost` / `pyknotic` /
-`karyorrhectic` or count them as expected misses. They are a few dozen cells per
-image at most.
+**Cell states.** The `state` column says how each cell is drawn. Most cells are
+`viable`. Tumor nests deeper than 75 um have a **necrotic center** (the innermost
+28% of the nest depth): its cells are `ghost`, `pyknotic` or `karyorrhectic`, carry
+no markers, have `cell_type = necrotic`, and 30% of them are missing altogether,
+leaving voids. About 3% of tumor cells are `mitotic`: a condensed, bar-shaped
+nucleus with bright Ki67 (still `cell_type = tumor`). Necrotic cells are few, 42
+across all eight images (cell detection finds 36; the 6 faint ghost nuclei fall below
+its threshold), which is exactly why a pipeline can miss them without anyone noticing. If your question treats them as tumor, relabel them; if it
+ignores them, drop them before scoring. Either way, decide on purpose.
 
 **Nuclei look like nuclei.** DAPI carries chromatin texture (a smooth euchromatin
 field plus bright heterochromatin spots), each cell has its own brightness, nuclei
@@ -181,15 +197,41 @@ Match your result against the ground truth to confirm the tool is working.
 
 | Analysis | Recommended features / setup | What you should see |
 |----------|------------------------------|---------------------|
-| **Clustering** (Leiden / KMeans / ...) | the 7 marker means, z-scored | clusters map cleanly onto the 7 types (graph methods like Leiden over-cluster into pure sub-types; each sub-cluster is a single type). Fibroblasts form the all-negative cluster |
-| **Phenotyping** (marker gating) | one threshold per marker, in the valley between 0 and the positive intensity | each type gated by its own marker(s); CD8 T = CD3+ CD8+, helper T = CD3+ CD8-, fibroblast = negative for all |
-| **Autoencoder / morphology classification** | image patches (+/- measurements), a labelled subset | types separable by appearance too (large round tumor, spindle fibroblast, small flattened endothelium, small round lymphocytes) |
+| **Clustering** (Leiden / KMeans / ...) | the 6 lineage-marker means (not Ki67), z-scored, after batch correction | clusters map onto the cell types (graph methods like Leiden over-cluster into pure sub-types; each sub-cluster is a single type). Fibroblasts and necrotic cells together form the all-negative cluster. Read **What can go wrong** below before choosing k |
+| **Phenotyping** (marker gating) | one threshold per marker, in the valley between 0 and the positive intensity | each type gated by its own marker(s); CD8 T = CD3+ CD8+, helper T = CD3+ CD8-, fibroblast = negative for all. No gate can call `necrotic` |
+| **Autoencoder / morphology classification** | image patches (+/- measurements), a labelled subset | types separable by appearance too (large round tumor, spindle fibroblast, small flattened endothelium, small round lymphocytes, shrunken or faint necrotic nuclei) |
 | **Neighborhood enrichment** | classify cells first, then run on the labels | tumor<->tumor, B<->B and endothelial<->endothelial strongly positive; tumor<->fibroblast strongly negative; tumor<->CD8-T positive |
 | **Ripley K/L** | per type | tumor, B and endothelial clustered (nests / follicles / vessels); fibroblast dispersed |
 | **Co-occurrence vs distance** | tumor vs CD8-T | conditional CD8-T density peaks near the nest boundary distance |
 | **Cellular neighborhoods** | windowed composition + clustering | recurring niches: tumor core, tumor-immune interface, stroma, follicle, vessel |
 | **Moran's I / Geary's C** | on `Ki67` | high spatial autocorrelation (Ki67 carries a smooth gradient) |
 | **Batch correction** (Harmony) | joint clustering across all 8 images | a cell type clusters together across all images despite the per-image intensity offsets (section 7) |
+
+### What can go wrong (measured on this dataset)
+
+The data can be recovered almost exactly, but only with the right setup. Each row
+changes one thing and was measured with KMeans on QuPath's per-cell measurements
+from all eight images (`analytical_logs/scripts/` and the numbers in
+`analytical_logs/logs/`):
+
+| Setup | Cells right | Main errors (truth -> called) |
+|---|---|---|
+| KMeans **k = 7** on all 24 per-cell means (includes Ki67 and DAPI), z-scored | 87.2% | helper T -> fibroblast 1,343: Ki67+ tumor takes a cluster of its own, so two real types must share one |
+| same, **k = 8** | 99.0% | necrotic -> fibroblast 30; CD8 T -> helper T 28 |
+| k = 7 on the **18 lineage-marker means** (no Ki67, no DAPI) | 98.9% | dim cells in the batch-offset images (tme_02 43 errors, tme_05 27); necrotic -> fibroblast 30 |
+| same, **each image z-scored on its own** | 98.7% | fixes tme_02 and tme_05 but breaks tme_06 (76 errors): the immune-rich image has a different mix of cells |
+| same, with each image's **recorded intensity scale undone** (an ideal batch correction) | 99.3% | necrotic -> fibroblast 32; dim CD8 T -> helper T 19 |
+| **supervised** random forest (5-fold), 7 markers | 99.6% | necrotic <-> tumor (necrotic cells sit inside nests and pick up their neighbors' PanCK) |
+| same **+ nucleus area, DAPI mean, circularity** | 99.9% | 8 cells: 4 necrotic -> tumor, 4 CD8 T <-> helper T |
+
+Scored on the 11,412 detected cells that match a ground-truth cell within 6 pixels.
+Cell detection itself misses 6 of the 42 necrotic cells -- all of them faint `ghost`
+nuclei below the detection threshold -- so they never reach any classifier.
+
+So: **k is not the number of cell types** when a type has a real subpopulation
+(Ki67+ tumor); **state markers such as Ki67 drive clustering** as hard as lineage
+markers; **per-image normalization is not batch correction** when images differ in
+composition; and **a class with no marker cannot be found by markers**.
 
 **Validating a classifier.** Because every cell ships with an exact label as a
 classified point (`tme_NN_points.geojson`), you can score any classification
@@ -237,7 +279,7 @@ metadata browser:
 | `synth.noise` | simulated imaging noise | `off` |
 | `synth.section_um` | simulated section thickness | `none` (every nucleus cut through its centre) |
 | `synth.stain_preset` | stain-appearance preset | `default` |
-| `synth.generator` | generator + version | `cell-phantom-creation 0.4.0` |
+| `synth.generator` | generator + version | `cell-phantom-creation 0.4.1` |
 | `synth.settings` | settings file, relative to the dataset root | `settings.json` |
 | `synth.note` | one-line summary, generated from the keys above | see the table above |
 
@@ -272,7 +314,7 @@ One row per cell. `all_groundtruth.csv` is every image concatenated; each
 | `cell_id` | id within the image |
 | `centroid_x_px`, `centroid_y_px` | nucleus centroid in pixels |
 | `centroid_x_um`, `centroid_y_um` | nucleus centroid in microns |
-| `cell_type` | one of the 7 types |
+| `cell_type` | one of the 7 types, or `necrotic` |
 | `region` | `nest` / `follicle` / `vessel` / `boundary` / `aligned_stroma` / `stroma` |
 | `region_id` | nest/follicle/vessel instance id (0 for boundary/aligned/stroma) |
 | `size_mode` | `small` / `medium` / `large` |
@@ -317,7 +359,18 @@ cluster/phenotype to the row's `cell_type`.
 
 ---
 
-## 10. Changes from v1.2
+## 10. Changes
+
+### v2.1 (from v2.0)
+
+- **Necrotic cells are their own class**: `cell_type = necrotic` (was `tumor`) in
+  the ground-truth CSVs and points, with the "What is a tumor cell?" box in section 3.
+  The images are **byte-identical** to v2.0; only the labels changed.
+- The demo project's classifier also uses nucleus area, DAPI and circularity, which
+  is what finds the necrotic cells.
+- Section 6 gains **What can go wrong**, measured.
+
+### v2.0 (from v1.2)
 
 - **CD31 replaces aSMA** (channel 3). aSMA does not mark resting stromal
   fibroblasts, so the scattered fibroblasts now carry **no marker**.

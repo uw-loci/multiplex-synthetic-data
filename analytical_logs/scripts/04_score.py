@@ -33,7 +33,7 @@ from scipy.spatial import cKDTree
 
 # ==== USER-EDITABLE PARAMETERS ==========================================
 # Ground-truth cell types (must match the `cell_type` column in all_groundtruth.csv).
-TYPES = ["tumor", "fibroblast", "endothelial", "cd8_t", "helper_t", "b_cell", "macrophage"]
+TYPES = ["tumor", "necrotic", "fibroblast", "endothelial", "cd8_t", "helper_t", "b_cell", "macrophage"]
 # Markers dumped by 03_dump_cells.groovy (a "Cell_<marker>" column each).
 MARKERS = ["PanCK", "Ki67", "CD31", "CD3", "CD8", "CD20", "CD68"]
 # Max distance (pixels) to match a detected cell to its nearest ground-truth cell.
@@ -42,9 +42,9 @@ MATCH_RADIUS_PX = 6.0
 # Cytoplasmic markers live in the CYTOPLASM (the nucleus is a dark hole and the
 # 5 um "Cell" expansion also picks up neighbours), so Cytoplasm gates cleaner.
 GATING_COMPARTMENTS = ["Cytoplasm", "Cell"]
-# Ground-truth states of necrotic tumor cells: they keep cell_type=tumor but lose
-# every marker, so marker-based methods cannot call them tumor.
-NECROTIC = {"ghost", "pyknotic", "karyorrhectic"}
+# Necrotic cells (cell_type "necrotic" from v2.1) carry no marker, and no gate
+# rule can call them: there is no cell-death marker in the panel.
+NECROTIC = {"necrotic"}
 # The gating rules live in classification_report() below; thresholds are computed
 # per marker by Otsu (no hardcoded intensity cutoffs).
 # ========================================================================
@@ -69,7 +69,7 @@ def load_matched(cells_csv, gt_csv):
             dist, gi = tree.query([float(d["x_px"]), float(d["y_px"])], distance_upper_bound=MATCH_RADIUS_PX)
             if not np.isfinite(dist):
                 continue
-            d["_gt_state"] = grows[gi].get("state", "viable")
+            d["_gt_state"] = grows[gi]["cell_type"]
             rows.append((img, d, grows[gi]["cell_type"]))
     return rows
 
@@ -177,8 +177,8 @@ def classification_report(rows, out, comp, mode):
         nec = np.array([d["_gt_state"] in NECROTIC for _, d, _ in rows])
         if nec.any():
             acc_v = float((pred[~nec] == yt[~nec]).mean())
-            f.write(f"excluding necrotic:{acc_v:.4f}  ({int(nec.sum())} necrotic tumor cells carry no "
-                    f"marker, so every gate calls them fibroblast)\n")
+            f.write(f"excluding necrotic:{acc_v:.4f}  ({int(nec.sum())} necrotic cells carry no "
+                    f"marker and no gate rule can call them)\n")
         f.write("\n")
         f.write("per-type precision / recall / F1:\n")
         for t in TYPES:

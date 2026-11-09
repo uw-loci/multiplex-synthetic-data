@@ -58,7 +58,11 @@ possible future direction, which is also why the dataset is named for what it is
   `uint8`, **0.5 um/pixel**, ImageJ-hyperstack TIFF (opens in QuPath / Fiji with
   channels, pixel size, and channel names intact).
 - **7 cell types** (tumor, fibroblast, endothelial, CD8 T, helper T, B cell,
-  macrophage) arranged into tissue niches.
+  macrophage) arranged into tissue niches, **plus a `necrotic` class**: dead cells
+  in nest centers that carry no marker. There is no cell-death marker in the panel,
+  so calling them is a deliberate test -- read "What is a tumor cell?" in
+  [INSTRUCTIONS.md](INSTRUCTIONS.md#3-cell-types-7-and-the-necrotic-class) before
+  scoring anything.
 - **Per-cell ground-truth CSV** -- for every cell: type, tissue region, position,
   morphology, state (viable / mitotic / necrotic), and per-marker positivity +
   intensity.

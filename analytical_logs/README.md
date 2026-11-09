@@ -1,30 +1,37 @@
 # Analytical logs
 
 Reproducible **clustering**, **classification**, and **spatial-neighborhood**
-analysis of this dataset (v2.0) with [QP-CAT](https://github.com/uw-loci/qupath-extension-cell-analysis-tools),
+analysis of this dataset (v2.1) with [QP-CAT](https://github.com/uw-loci/qupath-extension-cell-analysis-tools),
 plus the exact scripts so you can re-run and score it yourself against the
 per-cell ground truth. Every version number is in **[metadata.txt](metadata.txt)**.
 (The v1.2 logs used by the BINA / I2K 2026 workshop are at the
 [v1.2 tag](https://github.com/uw-loci/multiplex-synthetic-data/tree/v1.2/analytical_logs).)
 
-## Results summary (v2.0)
+## Results summary (v2.1)
+
+The ground truth has **8 classes**: 7 cell types plus `necrotic` (dead cells in nest
+centers, no marker; see "What is a tumor cell?" in the INSTRUCTIONS). No marker-based
+method can call that class, and every score below counts it honestly.
 
 - **Detection**: 11,423 cells detected vs 11,424 in the ground truth; no image is
-  off by more than 3 cells (`logs/detection.log`).
-- **Clustering** (QP-CAT Leiden, 7 marker means): cluster **purity 0.9993**, ARI
-  0.9979 after merging sub-clusters to their dominant type; every cell type is
-  captured at 0.998 or better. Fibroblasts, which carry no marker, form the
-  all-negative clusters.
-- **Classification**: a **multivariate** classifier (nearest class-centroid on the
-  6 lineage markers, 50/50 train/test) reaches **0.994**. A **single-marker Otsu gate**
-  reaches 0.983 (Cytoplasm) / 0.982 (Cell). Its main error is CD8 T cells read as
-  tumor from PanCK spillover at nest boundaries (71 of 1,336 on Cytoplasm, 117 on
-  Cell). The 36 necrotic tumor cells carry no marker and are called fibroblast by
-  any marker-based method; excluding them the gate scores 0.984 / 0.983.
-- **Neighborhood enrichment** (tme_00) matches the designed niches: B<->B (z 57),
-  endothelial<->endothelial (z 52) and tumor<->tumor (z 12) strongly positive,
-  tumor<->fibroblast negative (z -8), tumor<->CD8-T positive (z +3.2) while
-  tumor<->helper-T is negative (z -3.2).
+  off by more than 3 cells. The 6 necrotic `ghost` nuclei are too faint to detect.
+- **Clustering** (QP-CAT Leiden, 7 marker means): cluster **purity 0.9967**, ARI
+  0.9947 after merging sub-clusters to their dominant type. Every cell type is
+  captured at 0.998 or better; the 36 detected necrotic cells are captured at 0.000
+  (17 land in tumor clusters, 19 in the marker-negative ones).
+- **Classification**: a **single-marker Otsu gate** reaches 0.981 (Cytoplasm) /
+  0.980 (Cell); excluding the necrotic cells, 0.984 / 0.983. Its main error is CD8 T
+  cells read as tumor from PanCK spillover at nest boundaries (71 of 1,336 on
+  Cytoplasm). A **nearest class-centroid** classifier on the 6 lineage markers
+  reaches 0.963: the marker-free necrotic class pulls in 15% of the dimmer tumor
+  cells. A **random forest** given nucleus area, DAPI and circularity as well gets
+  99.9% (`logs/what_can_go_wrong.md`).
+- **What can go wrong**: `logs/what_can_go_wrong.md` measures each wrong setup --
+  k = number of types, Ki67 in the features, no batch correction, per-image
+  normalization -- against the truth (also in INSTRUCTIONS section 6).
+- **Neighborhood enrichment** (tme_00) matches the designed niches: B<->B,
+  endothelial<->endothelial and tumor<->tumor strongly positive, tumor<->fibroblast
+  negative, tumor<->CD8-T positive while tumor<->helper-T is negative.
 
 ## Files
 
@@ -37,6 +44,7 @@ logs/
   classification.log           classification scored vs ground truth (Otsu gate + multivariate)
   confusion_matrix.csv         Otsu-gate confusion matrix (actual x predicted), Cell + Cytoplasm
   neighborhood_enrichment.csv  type x type neighborhood z-scores
+  what_can_go_wrong.md         each analysis setup scored against the truth (KMeans, random forest)
 scripts/
   01_build_project.groovy      create a QuPath project from the images + run cell detection,
                                and copy each image's synth.* variation metadata into the project
@@ -96,8 +104,8 @@ was built to expose:
   `cd8_t -> tumor` off-diagonal cell (117 on Cell, 71 on Cytoplasm): T cells
   sitting right against a tumor nest.
 - **Dim / below-threshold** cells are negative for every marker and so fall to
-  `fibroblast`, the one marker-negative type. That includes the 36 necrotic tumor
-  cells, which carry no marker at all.
+  `fibroblast`, the one marker-negative type -- and so do the necrotic cells,
+  which carry no marker at all. No gate rule can call `necrotic`.
 
 `logs/confusion_matrix.csv` holds this matrix (Cell and Cytoplasm compartments) so
 you can see the expected numbers without any GUI. For contrast, a *better*

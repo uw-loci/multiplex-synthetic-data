@@ -16,10 +16,13 @@
  * ==== USER-EDITABLE PARAMETERS ==========================================
  */
 // Feature measurements (must match those on the detections). Ki67 is nuclear.
+// The last three are nuclear shape and brightness: there is no cell-death marker,
+// so they are what lets the classifier find the necrotic cells.
 MEAS = ["Cell: PanCK mean", "Nucleus: Ki67 mean", "Cell: CD31 mean",
-        "Cell: CD3 mean", "Cell: CD8 mean", "Cell: CD20 mean", "Cell: CD68 mean"]
+        "Cell: CD3 mean", "Cell: CD8 mean", "Cell: CD20 mean", "Cell: CD68 mean",
+        "Nucleus: Area", "Nucleus: DAPI mean", "Nucleus: Circularity"]
 // Class names (must match the ground-truth point classes).
-CLASSES = ["tumor", "fibroblast", "endothelial", "cd8_t", "helper_t", "b_cell", "macrophage"]
+CLASSES = ["tumor", "necrotic", "fibroblast", "endothelial", "cd8_t", "helper_t", "b_cell", "macrophage"]
 // ========================================================================
 
 import qupath.lib.projects.ProjectIO

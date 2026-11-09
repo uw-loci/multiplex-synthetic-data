@@ -13,7 +13,7 @@
 import static qupath.lib.gui.scripting.QPEx.*
 import qupath.lib.objects.PathObjectTools
 
-def CLASSES = ["tumor", "fibroblast", "endothelial", "cd8_t", "helper_t", "b_cell", "macrophage"]
+def CLASSES = ["tumor", "necrotic", "fibroblast", "endothelial", "cd8_t", "helper_t", "b_cell", "macrophage"]
 def idx = [:]; CLASSES.eachWithIndex { c, i -> idx[c] = i }
 def COLS = CLASSES + ["unclassified"]
 

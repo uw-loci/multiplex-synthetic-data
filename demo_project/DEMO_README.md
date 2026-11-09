@@ -15,8 +15,9 @@ images/                        the 8 tme_*.tif images (referenced relatively)
 data/                          per-image data: cell DETECTIONS (unclassified) +
                                  ground-truth POINT annotations (classified by type)
 classifiers/object_classifiers/
-  cell_type_classifier.json    a trained RTrees object classifier (7 marker means,
-                                 7 cell types), trained on all 8 images' ground truth
+  cell_type_classifier.json    a trained RTrees object classifier (7 marker means plus
+                                 nucleus area, DAPI and circularity; 7 cell types plus
+                                 necrotic), trained on all 8 images' ground truth
 scripts/                       Automate > Project scripts:
   fix_image_paths.groovy            point the project at the bundled images/ (run once, step 1)
   generate_cell_detections.groovy   how the detections were produced (reproduce/tweak)
@@ -59,8 +60,9 @@ is a one-line summary such as *"variant image; marker intensity x0.80 vs referen
    **confusion matrix and overall accuracy to the log** (View > Show log) and
    **selects the misclassified cells in the viewer**, so you can jump straight to
    where the classifier was wrong (with the gate, mostly T cells read as tumor from
-   PanCK spillover at nest boundaries, and the marker-negative necrotic tumor cells
-   in nest centres read as fibroblasts). No extension needed.
+   PanCK spillover at nest boundaries, and the necrotic cells in nest centers read
+   as fibroblasts, because no gate rule can call a class with no marker). No
+   extension needed.
 
 Use **Run > Run for project** on any of these scripts to do all 8 images at once.
 
@@ -80,5 +82,10 @@ script above is the way to reproduce the result yourself today.
   the 8-plex displays correctly with no manual setup.
 - Fibroblasts carry no marker in this dataset (v2.0 and later), so the gate calls a
   cell "fibroblast" when it is negative for every marker.
+- **There are eight classes, not seven.** Cells in dead nest centers are labelled
+  `necrotic` (v2.1 and later). They carry no marker and the panel has no death
+  marker, so whether they count as tumor is a labelling call; the trained classifier
+  finds most of them from nuclear shape and DAPI brightness. See "What is a tumor
+  cell?" in the dataset's INSTRUCTIONS.md.
 - Full dataset docs, ground-truth CSVs, and analysis logs are in the main release:
   https://github.com/uw-loci/multiplex-synthetic-data
