@@ -1,37 +1,40 @@
 # Analytical logs
 
 Reproducible **clustering**, **classification**, and **spatial-neighborhood**
-analysis of this dataset (v2.1) with [QP-CAT](https://github.com/uw-loci/qupath-extension-cell-analysis-tools),
+analysis of this dataset (v2.2) with [QP-CAT](https://github.com/uw-loci/qupath-extension-cell-analysis-tools),
 plus the exact scripts so you can re-run and score it yourself against the
 per-cell ground truth. Every version number is in **[metadata.txt](metadata.txt)**.
 (The v1.2 logs used by the BINA / I2K 2026 workshop are at the
 [v1.2 tag](https://github.com/uw-loci/multiplex-synthetic-data/tree/v1.2/analytical_logs).)
 
-## Results summary (v2.1)
+## Results summary (v2.2)
 
 The ground truth has **8 classes**: 7 cell types plus `necrotic` (dead cells in nest
 centers, no marker; see "What is a tumor cell?" in the INSTRUCTIONS). No marker-based
 method can call that class, and every score below counts it honestly.
 
-- **Detection**: 11,423 cells detected vs 11,424 in the ground truth; no image is
-  off by more than 3 cells. The 6 necrotic `ghost` nuclei are too faint to detect.
-- **Clustering** (QP-CAT Leiden, 7 marker means): cluster **purity 0.9967**, ARI
-  0.9947 after merging sub-clusters to their dominant type. Every cell type is
-  captured at 0.998 or better; the 36 detected necrotic cells are captured at 0.000
-  (17 land in tumor clusters, 19 in the marker-negative ones).
-- **Classification**: a **single-marker Otsu gate** reaches 0.981 (Cytoplasm) /
-  0.980 (Cell); excluding the necrotic cells, 0.984 / 0.983. Its main error is CD8 T
-  cells read as tumor from PanCK spillover at nest boundaries (71 of 1,336 on
+- **No saturation**: no pixel at 255 in any channel of any image; the brightest is 211
+  (`logs/saturation_audit.txt`).
+- **Detection**: 11,316 cells detected vs 11,313 in the ground truth; no image is
+  off by more than 2 cells. The 8 necrotic `ghost` nuclei are too faint to detect.
+- **Clustering** (QP-CAT Leiden, 7 marker means): cluster **purity 0.9975**, ARI
+  0.9961 after merging sub-clusters to their dominant type. Every cell type is
+  captured at 1.000; the 28 detected necrotic cells are captured at 0.000
+  (12 land in tumor clusters, 16 in the marker-negative ones).
+- **Classification**: a **single-marker Otsu gate** reaches 0.988 (Cytoplasm) /
+  0.985 (Cell); excluding the necrotic cells, 0.990 / 0.988. Its main error is CD8 T
+  cells read as tumor from PanCK spillover at nest boundaries (59 of 1,332 on
   Cytoplasm). A **nearest class-centroid** classifier on the 6 lineage markers
-  reaches 0.963: the marker-free necrotic class pulls in 15% of the dimmer tumor
+  reaches 0.961: the marker-free necrotic class pulls in some of the dimmer tumor
   cells. A **random forest** given nucleus area, DAPI and circularity as well gets
   99.9% (`logs/what_can_go_wrong.md`).
 - **What can go wrong**: `logs/what_can_go_wrong.md` measures each wrong setup --
   k = number of types, Ki67 in the features, no batch correction, per-image
   normalization -- against the truth (also in INSTRUCTIONS section 6).
-- **Neighborhood enrichment** (tme_00) matches the designed niches: B<->B,
-  endothelial<->endothelial and tumor<->tumor strongly positive, tumor<->fibroblast
-  negative, tumor<->CD8-T positive while tumor<->helper-T is negative.
+- **Neighborhood enrichment** (tme_00) matches the designed niches: B<->B (z 55),
+  endothelial<->endothelial (48) and tumor<->tumor (15) strongly positive,
+  tumor<->fibroblast negative (-9), tumor<->CD8-T positive (+2.5) while
+  tumor<->helper-T is negative (-3.1).
 
 ## Files
 
@@ -45,6 +48,7 @@ logs/
   confusion_matrix.csv         Otsu-gate confusion matrix (actual x predicted), Cell + Cytoplasm
   neighborhood_enrichment.csv  type x type neighborhood z-scores
   what_can_go_wrong.md         each analysis setup scored against the truth (KMeans, random forest)
+  saturation_audit.txt         per image and channel: brightest pixel, pixels at 255 (none)
 scripts/
   01_build_project.groovy      create a QuPath project from the images + run cell detection,
                                and copy each image's synth.* variation metadata into the project
@@ -97,11 +101,11 @@ $QP script scripts/06_classify_for_confusion_matrix.groovy --args PROJ --args gr
 
 Then score it -- run `check_against_ground_truth.groovy` (core QuPath), or the
 Confusion Matrix extension if you have it. The gate is deliberately imperfect
-(98.2% on the Cell compartment), and its errors are the *real* ones this dataset
+(98.5% on the Cell compartment), and its errors are the *real* ones this dataset
 was built to expose:
 
 - **PanCK spillover at nest boundaries** mislabels CD8 T cells as `tumor` -- the
-  `cd8_t -> tumor` off-diagonal cell (117 on Cell, 71 on Cytoplasm): T cells
+  `cd8_t -> tumor` off-diagonal cell (on Cytoplasm, 59 of 1,332): T cells
   sitting right against a tumor nest.
 - **Dim / below-threshold** cells are negative for every marker and so fall to
   `fibroblast`, the one marker-negative type -- and so do the necrotic cells,
@@ -111,7 +115,7 @@ was built to expose:
 you can see the expected numbers without any GUI. For contrast, a *better*
 classifier -- `GATING_COMPARTMENT = "Cytoplasm"`, or the trained object classifier
 (`07_train_object_classifier.groovy`) -- has a far cleaner diagonal; the offline
-multivariate classifier in `logs/classification.log` scores 0.994.
+random forest in `logs/what_can_go_wrong.md` scores 99.9%.
 
 ## How to reproduce
 

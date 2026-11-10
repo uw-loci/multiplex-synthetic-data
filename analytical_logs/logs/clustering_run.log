@@ -1,48 +1,48 @@
-12:38:59.250 [main] [INFO ] qupath.lib.scripting.QP - Initializing type adapters
-[qpcat-batch] 2026-10-15 12:39:01 INFO  qpcat-batch v1.0 starting
-[qpcat-batch] 2026-10-15 12:39:01 INFO  Loaded YAML 02_cluster.local.yaml; schema version 1.0
-[qpcat-batch] 2026-10-15 12:39:01 INFO  Resolved scope: 1 project(s), 8 image(s)
-[qpcat-batch] 2026-10-15 12:39:01 INFO  [1/8] image=tme_00.tif starting
-[qpcat-batch] 2026-10-15 12:39:01 INFO  [1/8] image=tme_00.tif step=clustering type=leiden starting
-12:39:01.545 [main] [INFO ] q.e.q.s.ApposeClusteringService - Initializing QPCAT Appose environment...
-12:39:01.642 [main] [INFO ] q.e.q.s.ApposeClusteringService - QPCAT Appose environment built (72 ms)
-[qpcat-batch] 2026-10-15 12:39:32 OK    [1/8] image=tme_00.tif step=clustering clusters=12 cells=1476 complete
-[qpcat-batch] 2026-10-15 12:39:32 INFO  [1/8] image=tme_00.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-[qpcat-batch] 2026-10-15 12:39:32 OK    [1/8] image=tme_00.tif elapsed_ms=30769 complete
-[qpcat-batch] 2026-10-15 12:39:32 INFO  [2/8] image=tme_01.tif starting
-[qpcat-batch] 2026-10-15 12:39:32 INFO  [2/8] image=tme_01.tif step=clustering type=leiden starting
-[qpcat-batch] 2026-10-15 12:39:47 OK    [2/8] image=tme_01.tif step=clustering clusters=13 cells=1464 complete
-[qpcat-batch] 2026-10-15 12:39:47 INFO  [2/8] image=tme_01.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-[qpcat-batch] 2026-10-15 12:39:47 OK    [2/8] image=tme_01.tif elapsed_ms=14716 complete
-[qpcat-batch] 2026-10-15 12:39:47 INFO  [3/8] image=tme_02.tif starting
-[qpcat-batch] 2026-10-15 12:39:47 INFO  [3/8] image=tme_02.tif step=clustering type=leiden starting
-[qpcat-batch] 2026-10-15 12:40:00 OK    [3/8] image=tme_02.tif step=clustering clusters=11 cells=1489 complete
-[qpcat-batch] 2026-10-15 12:40:00 INFO  [3/8] image=tme_02.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-[qpcat-batch] 2026-10-15 12:40:00 OK    [3/8] image=tme_02.tif elapsed_ms=12995 complete
-[qpcat-batch] 2026-10-15 12:40:00 INFO  [4/8] image=tme_03.tif starting
-[qpcat-batch] 2026-10-15 12:40:00 INFO  [4/8] image=tme_03.tif step=clustering type=leiden starting
-[qpcat-batch] 2026-10-15 12:40:13 OK    [4/8] image=tme_03.tif step=clustering clusters=9 cells=1298 complete
-[qpcat-batch] 2026-10-15 12:40:13 INFO  [4/8] image=tme_03.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-[qpcat-batch] 2026-10-15 12:40:13 OK    [4/8] image=tme_03.tif elapsed_ms=13664 complete
-[qpcat-batch] 2026-10-15 12:40:13 INFO  [5/8] image=tme_04.tif starting
-[qpcat-batch] 2026-10-15 12:40:13 INFO  [5/8] image=tme_04.tif step=clustering type=leiden starting
-[qpcat-batch] 2026-10-15 12:40:26 OK    [5/8] image=tme_04.tif step=clustering clusters=12 cells=1479 complete
-[qpcat-batch] 2026-10-15 12:40:26 INFO  [5/8] image=tme_04.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-[qpcat-batch] 2026-10-15 12:40:26 OK    [5/8] image=tme_04.tif elapsed_ms=13156 complete
-[qpcat-batch] 2026-10-15 12:40:26 INFO  [6/8] image=tme_05.tif starting
-[qpcat-batch] 2026-10-15 12:40:26 INFO  [6/8] image=tme_05.tif step=clustering type=leiden starting
-[qpcat-batch] 2026-10-15 12:40:40 OK    [6/8] image=tme_05.tif step=clustering clusters=11 cells=1512 complete
-[qpcat-batch] 2026-10-15 12:40:40 INFO  [6/8] image=tme_05.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-[qpcat-batch] 2026-10-15 12:40:40 OK    [6/8] image=tme_05.tif elapsed_ms=14029 complete
-[qpcat-batch] 2026-10-15 12:40:40 INFO  [7/8] image=tme_06.tif starting
-[qpcat-batch] 2026-10-15 12:40:40 INFO  [7/8] image=tme_06.tif step=clustering type=leiden starting
-[qpcat-batch] 2026-10-15 12:40:55 OK    [7/8] image=tme_06.tif step=clustering clusters=13 cells=1719 complete
-[qpcat-batch] 2026-10-15 12:40:55 INFO  [7/8] image=tme_06.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-[qpcat-batch] 2026-10-15 12:40:55 OK    [7/8] image=tme_06.tif elapsed_ms=14284 complete
-[qpcat-batch] 2026-10-15 12:40:55 INFO  [8/8] image=tme_07.tif starting
-[qpcat-batch] 2026-10-15 12:40:55 INFO  [8/8] image=tme_07.tif step=clustering type=leiden starting
-[qpcat-batch] 2026-10-15 12:41:04 OK    [8/8] image=tme_07.tif step=clustering clusters=9 cells=986 complete
-[qpcat-batch] 2026-10-15 12:41:04 INFO  [8/8] image=tme_07.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
-[qpcat-batch] 2026-10-15 12:41:04 OK    [8/8] image=tme_07.tif elapsed_ms=9686 complete
-[qpcat-batch] 2026-10-15 12:41:04 OK    Run complete: 8/8 images, 0 errors, 0 figures
-[qpcat-batch] 2026-10-15 12:41:04 OK    Exit code: 0
+11:24:37.760 [main] [INFO ] qupath.lib.scripting.QP - Initializing type adapters
+[qpcat-batch] 2026-11-10 11:24:39 INFO  qpcat-batch v1.0 starting
+[qpcat-batch] 2026-11-10 11:24:39 INFO  Loaded YAML <WORK>/02_cluster.local.yaml; schema version 1.0
+[qpcat-batch] 2026-11-10 11:24:39 INFO  Resolved scope: 1 project(s), 8 image(s)
+[qpcat-batch] 2026-11-10 11:24:39 INFO  [1/8] image=tme_00.tif starting
+[qpcat-batch] 2026-11-10 11:24:39 INFO  [1/8] image=tme_00.tif step=clustering type=leiden starting
+11:24:39.392 [main] [INFO ] q.e.q.s.ApposeClusteringService - Initializing QPCAT Appose environment...
+11:24:39.505 [main] [INFO ] q.e.q.s.ApposeClusteringService - QPCAT Appose environment built (76 ms)
+[qpcat-batch] 2026-11-10 11:25:44 OK    [1/8] image=tme_00.tif step=clustering clusters=11 cells=1418 complete
+[qpcat-batch] 2026-11-10 11:25:44 INFO  [1/8] image=tme_00.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-11-10 11:25:44 OK    [1/8] image=tme_00.tif elapsed_ms=65208 complete
+[qpcat-batch] 2026-11-10 11:25:44 INFO  [2/8] image=tme_01.tif starting
+[qpcat-batch] 2026-11-10 11:25:44 INFO  [2/8] image=tme_01.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-11-10 11:26:03 OK    [2/8] image=tme_01.tif step=clustering clusters=12 cells=1523 complete
+[qpcat-batch] 2026-11-10 11:26:03 INFO  [2/8] image=tme_01.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-11-10 11:26:03 OK    [2/8] image=tme_01.tif elapsed_ms=19299 complete
+[qpcat-batch] 2026-11-10 11:26:03 INFO  [3/8] image=tme_02.tif starting
+[qpcat-batch] 2026-11-10 11:26:03 INFO  [3/8] image=tme_02.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-11-10 11:26:21 OK    [3/8] image=tme_02.tif step=clustering clusters=11 cells=1477 complete
+[qpcat-batch] 2026-11-10 11:26:21 INFO  [3/8] image=tme_02.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-11-10 11:26:21 OK    [3/8] image=tme_02.tif elapsed_ms=17422 complete
+[qpcat-batch] 2026-11-10 11:26:21 INFO  [4/8] image=tme_03.tif starting
+[qpcat-batch] 2026-11-10 11:26:21 INFO  [4/8] image=tme_03.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-11-10 11:26:40 OK    [4/8] image=tme_03.tif step=clustering clusters=9 cells=1281 complete
+[qpcat-batch] 2026-11-10 11:26:40 INFO  [4/8] image=tme_03.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-11-10 11:26:40 OK    [4/8] image=tme_03.tif elapsed_ms=19335 complete
+[qpcat-batch] 2026-11-10 11:26:40 INFO  [5/8] image=tme_04.tif starting
+[qpcat-batch] 2026-11-10 11:26:40 INFO  [5/8] image=tme_04.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-11-10 11:27:01 OK    [5/8] image=tme_04.tif step=clustering clusters=13 cells=1470 complete
+[qpcat-batch] 2026-11-10 11:27:01 INFO  [5/8] image=tme_04.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-11-10 11:27:01 OK    [5/8] image=tme_04.tif elapsed_ms=20906 complete
+[qpcat-batch] 2026-11-10 11:27:01 INFO  [6/8] image=tme_05.tif starting
+[qpcat-batch] 2026-11-10 11:27:01 INFO  [6/8] image=tme_05.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-11-10 11:27:22 OK    [6/8] image=tme_05.tif step=clustering clusters=12 cells=1487 complete
+[qpcat-batch] 2026-11-10 11:27:22 INFO  [6/8] image=tme_05.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-11-10 11:27:22 OK    [6/8] image=tme_05.tif elapsed_ms=20621 complete
+[qpcat-batch] 2026-11-10 11:27:22 INFO  [7/8] image=tme_06.tif starting
+[qpcat-batch] 2026-11-10 11:27:22 INFO  [7/8] image=tme_06.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-11-10 11:27:42 OK    [7/8] image=tme_06.tif step=clustering clusters=12 cells=1691 complete
+[qpcat-batch] 2026-11-10 11:27:42 INFO  [7/8] image=tme_06.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-11-10 11:27:42 OK    [7/8] image=tme_06.tif elapsed_ms=19866 complete
+[qpcat-batch] 2026-11-10 11:27:42 INFO  [8/8] image=tme_07.tif starting
+[qpcat-batch] 2026-11-10 11:27:42 INFO  [8/8] image=tme_07.tif step=clustering type=leiden starting
+[qpcat-batch] 2026-11-10 11:27:59 OK    [8/8] image=tme_07.tif step=clustering clusters=9 cells=969 complete
+[qpcat-batch] 2026-11-10 11:27:59 INFO  [8/8] image=tme_07.tif step=spatial_stats graph=knn stats=5 ran inline with clustering
+[qpcat-batch] 2026-11-10 11:27:59 OK    [8/8] image=tme_07.tif elapsed_ms=17073 complete
+[qpcat-batch] 2026-11-10 11:27:59 OK    Run complete: 8/8 images, 0 errors, 0 figures
+[qpcat-batch] 2026-11-10 11:27:59 OK    Exit code: 0

@@ -4,7 +4,7 @@ This is the detailed guide: what the data contains, how to load and detect cells
 in QuPath, what each analysis should recover, and the ground-truth format. For
 the short version see [README.md](README.md).
 
-This guide describes **v2.1**. The BINA / I2K 2026 workshop uses **v1.2**, which
+This guide describes **v2.2**. The BINA / I2K 2026 workshop uses **v1.2**, which
 has an aSMA channel instead of CD31, six cell types and no necrotic cells; its guide
 is [INSTRUCTIONS.md at v1.2](https://github.com/uw-loci/multiplex-synthetic-data/blob/v1.2/INSTRUCTIONS.md).
 What changed is listed in [section 10](#10-changes).
@@ -67,7 +67,8 @@ the cell's cytoplasm; membrane markers (CD3, CD8, CD20, CD31) are a bright band 
 the cell's outer edge with a faint fill inside it. So a marker's signal lives in
 `Cell: <marker> mean` and `Cytoplasm: <marker> mean`; the one nuclear marker
 (Ki67) lives in `Nucleus: Ki67 mean`. Markers have **no background** (a positive
-cell against black), so each marker is cleanly **bimodal** -- which is what makes
+cell against black), and **no pixel reaches 255** (8-bit saturation; the brightest
+pixel in the dataset is 211), so each marker is cleanly **bimodal** -- which is what makes
 both clustering and threshold gating work.
 
 **Stromal fibroblasts carry no marker.** They show as DAPI-only nuclei with
@@ -120,8 +121,8 @@ split to test cluster resolution / a two-marker gate.
 28% of the nest depth): its cells are `ghost`, `pyknotic` or `karyorrhectic`, carry
 no markers, have `cell_type = necrotic`, and 30% of them are missing altogether,
 leaving voids. About 3% of tumor cells are `mitotic`: a condensed, bar-shaped
-nucleus with bright Ki67 (still `cell_type = tumor`). Necrotic cells are few, 42
-across all eight images (cell detection finds 36; the 6 faint ghost nuclei fall below
+nucleus with bright Ki67 (still `cell_type = tumor`). Necrotic cells are few, 36
+across all eight images (cell detection finds 28; the 8 faint ghost nuclei fall below
 its threshold), which is exactly why a pipeline can miss them without anyone noticing. If your question treats them as tumor, relabel them; if it
 ignores them, drop them before scoring. Either way, decide on purpose.
 
@@ -179,7 +180,7 @@ region each cell came from, so you can check any of the above directly.
    Other settings that work well: requested pixel size 0.5 um, sigma ~1.5 um,
    minimum area ~8 um^2, maximum area ~1000 um^2, threshold ~50, cell expansion
    ~5 um, include nuclei + make measurements on. With these, detected counts match
-   the ground-truth cell count to within 3 cells per image (0.2%; per image: section 7).
+   the ground-truth cell count to within 2 cells per image (0.2%; per image: section 7).
 
 4. QuPath will produce per-cell measurements named `Cell: PanCK mean`,
    `Nucleus: Ki67 mean`, `Cell: CD31 mean`, etc. -- these are the features to
@@ -216,16 +217,16 @@ from all eight images (`analytical_logs/scripts/` and the numbers in
 
 | Setup | Cells right | Main errors (truth -> called) |
 |---|---|---|
-| KMeans **k = 7** on all 24 per-cell means (includes Ki67 and DAPI), z-scored | 87.2% | helper T -> fibroblast 1,343: Ki67+ tumor takes a cluster of its own, so two real types must share one |
-| same, **k = 8** | 99.0% | necrotic -> fibroblast 30; CD8 T -> helper T 28 |
-| k = 7 on the **18 lineage-marker means** (no Ki67, no DAPI) | 98.9% | dim cells in the batch-offset images (tme_02 43 errors, tme_05 27); necrotic -> fibroblast 30 |
-| same, **each image z-scored on its own** | 98.7% | fixes tme_02 and tme_05 but breaks tme_06 (76 errors): the immune-rich image has a different mix of cells |
-| same, with each image's **recorded intensity scale undone** (an ideal batch correction) | 99.3% | necrotic -> fibroblast 32; dim CD8 T -> helper T 19 |
-| **supervised** random forest (5-fold), 7 markers | 99.6% | necrotic <-> tumor (necrotic cells sit inside nests and pick up their neighbors' PanCK) |
-| same **+ nucleus area, DAPI mean, circularity** | 99.9% | 8 cells: 4 necrotic -> tumor, 4 CD8 T <-> helper T |
+| KMeans **k = 7** on all 24 per-cell means (includes Ki67 and DAPI), z-scored | 87.8% | helper T -> fibroblast 1,286: Ki67+ tumor takes a cluster of its own, so two real types must share one |
+| same, **k = 8** | 99.4% | necrotic -> fibroblast 24; dim B and CD8 T cells |
+| k = 7 on the **18 lineage-marker means** (no Ki67, no DAPI) | 99.2% | dim cells in the batch-offset images (tme_02 34 errors, tme_05 24); necrotic -> fibroblast 25 |
+| same, **each image z-scored on its own** | 99.2% | fixes tme_02 but breaks tme_06 (52 errors): the immune-rich image has a different mix of cells |
+| same, with each image's **recorded intensity scale undone** (an ideal batch correction) | 99.7% | necrotic -> fibroblast 26; a few dim helper T and B cells |
+| **supervised** random forest (5-fold), 7 markers | 99.7% | necrotic <-> tumor (necrotic cells sit inside nests and pick up their neighbors' PanCK) |
+| same **+ nucleus area, DAPI mean, circularity** | 99.9% | 6 cells, half of them necrotic -> tumor |
 
-Scored on the 11,412 detected cells that match a ground-truth cell within 6 pixels.
-Cell detection itself misses 6 of the 42 necrotic cells -- all of them faint `ghost`
+Scored on the 11,294 detected cells that match a ground-truth cell within 6 pixels.
+Cell detection itself misses 8 of the 36 necrotic cells -- all of them faint `ghost`
 nuclei below the detection threshold -- so they never reach any classifier.
 
 So: **k is not the number of cell types** when a type has a real subpopulation
@@ -279,7 +280,7 @@ metadata browser:
 | `synth.noise` | simulated imaging noise | `off` |
 | `synth.section_um` | simulated section thickness | `none` (every nucleus cut through its centre) |
 | `synth.stain_preset` | stain-appearance preset | `default` |
-| `synth.generator` | generator + version | `cell-phantom-creation 0.4.1` |
+| `synth.generator` | generator + version | `cell-phantom-creation 0.5.0` |
 | `synth.settings` | settings file, relative to the dataset root | `settings.json` |
 | `synth.note` | one-line summary, generated from the keys above | see the table above |
 
@@ -291,15 +292,15 @@ settings):
 
 | Image | Ground-truth cells | Detected | Difference |
 |-------|-------|-------|-------|
-| tme_00 | 1478 | 1476 | -2 |
-| tme_01 | 1461 | 1464 | +3 |
-| tme_02 | 1489 | 1489 | +0 |
-| tme_03 | 1299 | 1298 | -1 |
-| tme_04 | 1480 | 1479 | -1 |
-| tme_05 | 1511 | 1512 | +1 |
-| tme_06 | 1720 | 1719 | -1 |
-| tme_07 | 986 | 986 | +0 |
-| **total** | **11424** | **11423** | **-1** |
+| tme_00 | 1417 | 1418 | +1 |
+| tme_01 | 1522 | 1523 | +1 |
+| tme_02 | 1477 | 1477 | +0 |
+| tme_03 | 1283 | 1281 | -2 |
+| tme_04 | 1470 | 1470 | +0 |
+| tme_05 | 1488 | 1487 | -1 |
+| tme_06 | 1689 | 1691 | +2 |
+| tme_07 | 967 | 969 | +2 |
+| **total** | **11313** | **11316** | **+3** |
 
 ---
 
@@ -352,14 +353,28 @@ cluster/phenotype to the row's `cell_type`.
 - **ImageJ TIFF, not OME-TIFF.** The data ships as ImageJ hyperstacks because that
   format reads back reliably (channels + names + pixel size) across QuPath/Fiji;
   some readers mis-map multi-channel OME-TIFFs written by scientific-Python tools.
-- **No background or noise.** Markers and DAPI are background-free and there is no
-  simulated imaging noise (`synth.noise = off`). If your tool expects
+- **No background, noise or saturation.** Markers and DAPI are background-free,
+  there is no simulated imaging noise (`synth.noise = off`), and no pixel reaches
+  255: every cell is designed at or below 220 in the brightest (x1.20) image, and the
+  generator refuses to write a 255 (v2.2 and later; v2.0 and v2.1 had saturated
+  pixels). If your tool expects
   autofluorescence or a nonzero floor, this data will look unusually clean. The
   generator can add both; a release that does will say so in `synth.noise`.
 
 ---
 
 ## 10. Changes
+
+### v2.2 (from v2.1)
+
+- **No saturated pixels.** v2.0 and v2.1 had pixels at 255 in DAPI in every image and
+  in most markers of the x1.20 image (tme_04). The generator (0.5.0) now designs
+  every cell with headroom -- per-cell brightness spread cut at +/-2 sigma, marker
+  ranges and DAPI (140) lowered so the brightest cell in the brightest image is at
+  most 220 -- and refuses to write a 255. The brightest pixel in v2.2 is 211.
+- Markers are therefore dimmer than in v2.1 (roughly 0.6x; PanCK about 0.5x), and
+  the images, cell positions and counts are new (11,313 cells, 36 necrotic). All
+  numbers in this guide and in `analytical_logs/` are re-measured on v2.2.
 
 ### v2.1 (from v2.0)
 

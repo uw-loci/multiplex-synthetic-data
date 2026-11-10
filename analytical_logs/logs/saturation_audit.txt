@@ -1,0 +1,8 @@
+tme_00.tif max {'DAPI': 211, 'PanCK': 113, 'Ki67': 144, 'CD31': 151, 'CD3': 167, 'CD8': 161, 'CD20': 159, 'CD68': 163} n255 0 above_knee 0 capped {}
+tme_01.tif max {'DAPI': 211, 'PanCK': 116, 'Ki67': 143, 'CD31': 147, 'CD3': 172, 'CD8': 154, 'CD20': 169, 'CD68': 160} n255 0 above_knee 0 capped {}
+tme_02.tif max {'DAPI': 206, 'PanCK': 92, 'Ki67': 123, 'CD31': 118, 'CD3': 133, 'CD8': 135, 'CD20': 131, 'CD68': 143} n255 0 above_knee 0 capped {}
+tme_03.tif max {'DAPI': 210, 'PanCK': 115, 'Ki67': 155, 'CD31': 143, 'CD3': 167, 'CD8': 167, 'CD20': 171, 'CD68': 166} n255 0 above_knee 0 capped {}
+tme_04.tif max {'DAPI': 209, 'PanCK': 139, 'Ki67': 190, 'CD31': 157, 'CD3': 208, 'CD8': 189, 'CD20': 194, 'CD68': 199} n255 0 above_knee 0 capped {}
+tme_05.tif max {'DAPI': 209, 'PanCK': 94, 'Ki67': 144, 'CD31': 134, 'CD3': 144, 'CD8': 142, 'CD20': 136, 'CD68': 139} n255 0 above_knee 0 capped {}
+tme_06.tif max {'DAPI': 209, 'PanCK': 103, 'Ki67': 142, 'CD31': 144, 'CD3': 168, 'CD8': 161, 'CD20': 174, 'CD68': 179} n255 0 above_knee 0 capped {}
+tme_07.tif max {'DAPI': 210, 'PanCK': 115, 'Ki67': 153, 'CD31': 149, 'CD3': 164, 'CD8': 144, 'CD20': 0, 'CD68': 159} n255 0 above_knee 0 capped {}
